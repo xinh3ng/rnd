@@ -1,7 +1,17 @@
+# Document files
+*.zip
+*.gz
+*.pdf
+*.xls[x]
+*.csv
+*.jp[e]g
+*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+*.exe
 
 # C extensions
 *.so
