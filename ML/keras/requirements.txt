@@ -1,0 +1,10 @@
+numpy
+scipy
+pandas
+scikit-learn
+tensorflow
+theano
+keras
+h5py
+gym
+keras-rl
