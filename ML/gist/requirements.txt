@@ -1,3 +1,4 @@
+Cython
 numpy
 scipy
 pandas
@@ -5,3 +6,8 @@ scikit-learn
 tensorflow
 keras
 matplotlib
+six
+spacy
+sputnik
+pyqt
+spyder
