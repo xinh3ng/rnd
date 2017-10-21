@@ -7,3 +7,4 @@ tensorflow
 theano
 keras
 opencv-contrib-python
+sseclient

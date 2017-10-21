@@ -25,15 +25,17 @@ if __name__ == "__main__":
 
     image_width = 1000
     do_blur = True
-    algo_name = "OpencvOemAlgo"  # OpencvOemAlgo, ImageDiffAlgo
+    algo_name = "MIL"  # MIL, KCF, ImageDiffAlgo
 
     video = image_utils.get_video_object(args.get("video_file", None))
 
     algo_map = {
         "ImageDiffAlgo": ImageDiffAlgo(video, image_width, do_blur),
-        "OpencvOemAlgo": OpencvOemAlgo(video, image_width, tracking_algo_name="MIL")
+        "MIL": OpencvOemAlgo(video, image_width, tracking_algo_name="MIL"),
+        "KCF": OpencvOemAlgo(video, image_width, tracking_algo_name="KCF")
     }
-    algo_map[algo_name].run()
+    algo = algo_map[algo_name]
+    algo.run()
 
     # cleanup the video and close any open windows
     video.release()
