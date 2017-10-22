@@ -1,0 +1,9 @@
+Cython
+numpy
+scipy
+pandas
+flask
+scikit-learn
+matplotlib
+six
+spacy
