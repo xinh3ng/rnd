@@ -3,7 +3,7 @@
 https://cloud.google.com/blog/big-data/2017/01/learn-tensorflow-and-deep-learning-without-a-phd
 
 # Usage
-  $ python3 ./tensorflow_martin_gorner.py
+  $ python3 ./tf_martin_gorner.py
 """
 import tensorflow as tf
 import tensorflow.examples.tutorials.mnist.input_data as input_data

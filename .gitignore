@@ -103,6 +103,7 @@ ENV/
 .RData
 *.RData
 .Rhistory
+.Rproj.user
 .Rproj.user/
 .ropeproject
 
