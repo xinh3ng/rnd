@@ -9,5 +9,5 @@ matplotlib
 six
 spacy
 sputnik
-pyqt
+pyqt5
 spyder

@@ -9,7 +9,6 @@ import random
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import RMSprop
-
 from pydsutils.generic import create_logger
 
 logger = create_logger(__name__, level="info")
@@ -29,6 +28,8 @@ def find_loc(state, obj):
 
 
 def get_loc(state, level):
+    """Get location from a given object
+    """
     for i in range(0, 4):
         for j in range(0, 4):
             if (state[i, j][level] == 1):
@@ -41,13 +42,13 @@ def init_grid():
     """
     state = np.zeros((4, 4, 4)) # 4 x 4 is the grid. Last dimention of 4 is for the 4 objects
     # player
-    state[0, 1] = np.array([0, 0, 0, 1])
+    state[0, 1] = np.array([0, 0, 0, 1])  # 3
     # wall
-    state[2, 2] = np.array([0, 0, 1, 0])
+    state[2, 2] = np.array([0, 0, 1, 0])  # 2
     # pit
-    state[1, 1] = np.array([0, 1, 0, 0])
+    state[1, 1] = np.array([0, 1, 0, 0])  # 1
     # goal
-    state[3, 3] = np.array([1, 0, 0, 0])
+    state[3, 3] = np.array([1, 0, 0, 0])  # 0
     return state
 
 
@@ -115,7 +116,7 @@ def make_move(state, action):
     new_loc = (player_loc[0] + actions[action][0], player_loc[1] + actions[action][1])  # play moves
     if (new_loc != wall):
         if ((np.array(new_loc) <= (3, 3)).all() and (np.array(new_loc) >= (0,0)).all()):
-            state[new_loc][3] = 1
+            state[new_loc][3] = 1  # 3 means the player
 
     new_player_loc = find_loc(state, np.array([0, 0, 0, 1]))
     if (not new_player_loc):
@@ -166,15 +167,15 @@ def disp_grid(state):
 
 def build_model():
     model = Sequential()
-    model.add(Dense(164, init="lecun_uniform", input_shape=(64, )))  # 64 means all 16 cells x 4 objects
+    model.add(Dense(164, kernel_initializer="lecun_uniform", input_shape=(64, )))  # 64 means all 16 cells x 4 objects
     model.add(Activation("relu"))
     # model.add(Dropout(0.2))
 
-    model.add(Dense(150, init="lecun_uniform"))
+    model.add(Dense(150, kernel_initializer="lecun_uniform"))
     model.add(Activation("relu"))
     # model.add(Dropout(0.2))
 
-    model.add(Dense(4, init="lecun_uniform"))  # 4 meand 4 actions
+    model.add(Dense(4, kernel_initializer="lecun_uniform"))  # 4 meand 4 actions
     model.add(Activation("linear"))  # linear so we can have a range of real-valued outputs
 
     rms = RMSprop()
@@ -182,19 +183,35 @@ def build_model():
     return model
 
 
-def predict(model, state):
+def fit_model(model, state, y):
+    """
+
+    :param state: Features that are used to make a fit
+    :param y: Fit values
+    """
+    model.fit(state.reshape(1, 64), y, batch_size=1, epochs=1, verbose=1)
+    return model
+
+
+def predict_model(model, state):
     """Predict q-value for 4 possible actions
     """
     return model.predict(state.reshape(1, 64), batch_size=1)
 
 
 def train_model(model, epochs, gamma, epsilon):
+    """
+
+    :param epochs: Number of games to train on
+    :param gamma: discount the future rewards. Since it may take several moves to goal, making gamma high
+    :param epsilon: probability to "explore"
+    """
     for i in range(epochs):
         state = init_grid()
         status = 1
         while(status == 1):  # While game still in progress
             # We are in state S, let's run our Q function on S to get Q values for all possible actions
-            qvals = predict(model, state)
+            qvals = predict_model(model, state)
             if (random.random() < epsilon): # choose random action
                 action = np.random.randint(0, 4)
             else: #choose best action from Q(s,a) values
@@ -204,7 +221,7 @@ def train_model(model, epochs, gamma, epsilon):
             new_state = make_move(state, action)
             reward = get_reward(new_state)
 
-            new_qvals = predict(model, state)
+            new_qvals = predict_model(model, state)
             maxq = np.max(new_qvals)
             y = np.zeros((1, 4))
             y[:] = qvals[:]
@@ -212,10 +229,11 @@ def train_model(model, epochs, gamma, epsilon):
                 updated_reward = reward + gamma * maxq
             else:  # In terminal state
                 updated_reward = reward
+
             y[0][action] = updated_reward # target output
             print("Game no.: %d" % i)
             print(y)
-            model.fit(state.reshape(1, 64), y, batch_size=1, nb_epoch=1, verbose=1)
+            model = fit_model(model, state, y)
             state = new_state
             if reward != -1:  # game is over
                 status = 0
@@ -224,11 +242,47 @@ def train_model(model, epochs, gamma, epsilon):
             epsilon -= (1.0 / epochs)  # reduce epsilon
     return model
 
+
+def train_model_experience_replay(model, epochs, gamma, epsilon):
+    pass
+
+
+def test_algo(model, init=0):
+    i = 0
+    if init == 0:
+        state = init_grid()
+    elif init == 1:
+        state = init_grid_player()
+    elif init == 2:
+        state = init_grid_rand()
+
+    print("Initial State:")
+    print(disp_grid(state))
+    status = 1
+    # while game still in progress
+    while(status == 1):
+        qval = predict_model(model, state)
+        action = (np.argmax(qval))  # take action with highest Q-value
+        print("Move #: %s; Taking action: %s" % (i, action))
+        state = make_move(state, action)
+        print(disp_grid(state))
+        reward = get_reward(state)
+        if reward != -1:
+            status = 0
+            print("Reward: %s" % (reward))
+
+        i += 1
+        if (i > 20):
+            print("Game lost because taking more than 20 moves.")
+            break
+    return
+
 #################################################################
 
-epochs = 500  # number of games to train on
+epochs = 1000  # number of games to train on
 gamma = 0.9 #s ince it may take several moves to goal, making gamma high
 epsilon = 1 # probability of choosing a random action
 
 model = build_model()
 model = train_model(model, epochs, gamma, epsilon)
+test_algo(model, init=0)
