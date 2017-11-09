@@ -11,3 +11,5 @@ spacy
 sputnik
 pyqt5
 spyder
+ipykernel
+grakn

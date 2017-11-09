@@ -99,5 +99,10 @@ ENV/
 # Spyder project settings
 .spyderproject
 
-# Rope project settings
+# R project settings
+.RData
+*.RData
+.Rhistory
+.Rproj.user/
 .ropeproject
+
