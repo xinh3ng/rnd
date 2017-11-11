@@ -2,17 +2,21 @@ Cython
 numpy
 scipy
 pandas
+matplotlib
+pydot 
+graphviz
 tqdm
 grakn
+h5py
 
 scikit-learn
+opencv-python
 tensorflow
 keras
 theano
 spacy
 gensim
 
-matplotlib
 six
 sputnik
 pyqt5

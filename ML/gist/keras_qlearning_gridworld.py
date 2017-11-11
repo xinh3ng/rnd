@@ -278,11 +278,15 @@ def test_algo(model, init=0):
     return
 
 #################################################################
+# Provide a usage example
+#################################################################
+if __name__ == "__main__":
+    epochs = 2000  # number of games to train on
+    gamma = 0.9 #s ince it may take several moves to goal, making gamma high
+    epsilon = 1 # probability of choosing a random action
 
-epochs = 1000  # number of games to train on
-gamma = 0.9 #s ince it may take several moves to goal, making gamma high
-epsilon = 1 # probability of choosing a random action
+    model = build_model()
+    model = train_model(model, epochs, gamma, epsilon)
+    test_algo(model, init=0)
+    logger.info("ALL DONE!\n")
 
-model = build_model()
-model = train_model(model, epochs, gamma, epsilon)
-test_algo(model, init=0)
