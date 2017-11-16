@@ -27,7 +27,7 @@ word_vectors = KeyedVectors.load_word2vec_format(
         binary=True)
 logger.info("Word vec of human is: %s " % str(word_vectors["human"]))
 
-# 用 gensim 训练你自己的词向量
+# Use gensim to train your word2vec
 sentences = [["first", "sentence"], ["second","sentence"]]
 model = gensim.models.Word2Vec(sentences, min_count=1, size=300, workers=4)
 logger.info("word2vec model is trained")
