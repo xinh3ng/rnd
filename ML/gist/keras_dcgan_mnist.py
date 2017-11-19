@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-https://github.com/adeshpande3/Generative-Adversarial-Networks/blob/master/Generative%20Adversarial%20Networks%20Tutorial.ipynb
+https://towardsdatascience.com/gan-by-example-using-keras-on-tensorflow-backend-1a6d515a60d0
 """
 from pdb import set_trace as debug
 import numpy as np
@@ -19,7 +19,7 @@ logger = create_logger(__name__)
 
 
 class DCGAN(object):
-    def __init__(self, img_rows=28, img_cols=28, channel=1):
+    def __init__(self, img_rows, img_cols, channel):
 
         self.img_rows = img_rows
         self.img_cols = img_cols
@@ -28,8 +28,13 @@ class DCGAN(object):
         self.g = None   # generator
         self.adv_model = None  # adversarial model
         self.d_model = None  # discriminator model
+    
+    def get_discrimonator(self):
+        return self.d
+    def get_generatorself):
+        return self.g
 
-    def discriminator(self):
+    def gen_discriminator(self):
         """
         (W−F+2P)/S+1
         """
@@ -65,7 +70,7 @@ class DCGAN(object):
         self.d.summary()
         return self.d
     
-    def generator(self):
+    def gen_generator(self):
         if self.g:
             return self.g
         
@@ -108,7 +113,7 @@ class DCGAN(object):
             return self.d_model
         optimizer = RMSprop(lr=0.0002, decay=6e-8)
         self.d_model = Sequential()
-        self.d_model.add(self.discriminator())
+        self.d_model.add(self.gen_discriminator())
         self.d_model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
         return self.d_model
 
@@ -117,8 +122,8 @@ class DCGAN(object):
             return self.adv_model
         optimizer = RMSprop(lr=0.0001, decay=3e-8)
         self.adv_model = Sequential()
-        self.adv_model.add(self.generator())
-        self.adv_model.add(self.discriminator())
+        self.adv_model.add(self.gen_generator())
+        self.adv_model.add(self.gen_discriminator())
         self.adv_model.compile(loss='binary_crossentropy', optimizer=optimizer,\
             metrics=['accuracy'])
         return self.adv_model
@@ -135,13 +140,12 @@ class DCGAN_Trainer(object):
         self.batch_size = batch_size
         self.save_interval = save_interval
 
-        self.dcgan = DCGAN()
+        self.dcgan = DCGAN(self.img_rows, self.img_cols, self.channel)
         self.discriminator = self.dcgan.discriminator_model()
-        self.generator = self.dcgan.generator()
         self.adversarial = self.dcgan.adversarial_model()
+        self.generator = self.dcgan.gen_generator()
 
     def train(self, x_train):
-        
         noise_input = None
         if self.save_interval > 0:
             noise_input = np.random.uniform(-1.0, 1.0, size=[16, 100])
