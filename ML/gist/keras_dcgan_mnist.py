@@ -31,7 +31,7 @@ class DCGAN(object):
     
     def get_discrimonator(self):
         return self.d
-    def get_generatorself):
+    def get_generator(self):
         return self.g
 
     def gen_discriminator(self):
