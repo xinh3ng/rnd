@@ -1,6 +1,7 @@
-Cython
 numpy
 scipy
+six
+wheel
 pandas
 matplotlib
 pydot 
@@ -11,15 +12,13 @@ h5py
 
 scikit-learn
 opencv-python
-tensorflow
+opencv-contrib-python
+#tensorflow
 keras
-theano
 gym
 spacy
 gensim
 
-six
-sputnik
 pyqt5
 spyder
 ipykernel
