@@ -3,7 +3,10 @@
 
 https://scotch.io/amp/tutorials/build-a-distributed-streaming-system-with-apache-kafka-and-python
 
-$ export PYSPARK_PYTHON=`which python`; $SPARK_HOME/bin/spark-submit --master=local --packages=org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2 spark_code.py
+PROCEDURE
+   $ brew services start kafka
+
+$ export PYSPARK_PYTHON=`which python`; $SPARK_HOME/bin/spark-submit --master=local spark_code.py
 """
 import os
 from pyspark import SparkContext
@@ -12,12 +15,11 @@ from pyspark.streaming.kafka import KafkaUtils
 import json
 from pydsutils.generic import create_logger
 
-logger = create_logger(__name__, level="info")
-os.environ['PYSPARK_SUBMIT_ARGS'] = "--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2 pyspark-shell"
+logger = create_logger(__name__, level='info')
+os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-streaming-kafka-0-8:2.2.1 pyspark-shell'
 
-sc = SparkContext(appName="spark-streaming-Kafka")
+sc = SparkContext(appName='spark streaming kafka')
 sc.setLogLevel("ERROR")
-
 ssc = StreamingContext(sc, 60)
 
 # Zookeeper quorum
@@ -32,3 +34,4 @@ author_counts = authors_dstream.countByValue()
 author_counts.pprint()
 
 logger.info("ALL DONE!\n")
+

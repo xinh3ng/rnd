@@ -8,14 +8,14 @@ from flask import Flask, Response
 from kafka import KafkaConsumer
 from pydsutils.generic import create_logger
 
-logger = create_logger(__name__, level="info")
+logger = create_logger(__name__, level='info')
 
-port = 9092
-topic = "kafka_video"
+producer_port = 9092
+topic = 'kafka_bunny_video'
 
-#connect to Kafka server and pass the topic we want to consume
-consumer = KafkaConsumer(topic, group_id="view",
-                         bootstrap_servers=["0.0.0.0:%d" %port])
+# Connect to Kafka server and pass the topic we want to consume
+consumer = KafkaConsumer(topic, group_id='view',
+                         bootstrap_servers=['0.0.0.0:%d' % producer_port])
 app = Flask(__name__)
 
 @app.route('/')
@@ -32,5 +32,5 @@ def kafkastream():
 
 if __name__ == '__main__':
     server = 5000
-    logger.info("Server name is %d" %server)
-    app.run(host="0.0.0.0", port=server, debug=True)
+    logger.info('Server name is %d' %server)
+    app.run(host='0.0.0.0', port=server, debug=True)
