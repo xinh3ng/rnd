@@ -1,0 +1,6 @@
+flask
+scrapy
+splash
+scrapy-splash
+
+https://github.com/xinh3ng/pydsutils/raw/master/packages/pydsutils-0.7.0-py2.py3-none-any.whl
