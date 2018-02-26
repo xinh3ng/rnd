@@ -1,4 +1,5 @@
 flask
+selenium
 scrapy
 splash
 scrapy-splash
