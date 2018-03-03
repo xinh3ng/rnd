@@ -4,7 +4,7 @@
 Procedure:
   $ source venv/bin/activate (python 3.6)
   $ source scripts/setenv.sh (Set environment variables like PYTHONPATH
-  $ python smule/train_model.py --nfolds=5 --total_size=0.5 --val_size=0.2
+  $ python train_model.py --src_data_file=/share/data/smule/incidences_piano.tsv --nfolds=5 --total_size=0.5 --val_size=0.2
 
 Useful links:
   https://vinta.ws/code/build-a-recommender-system-with-pyspark-implicit-als.html
@@ -38,7 +38,7 @@ def main(src_data_file, nfolds, total_size, val_size):
         train_data, val_data = DU.gen_train_val_data(mf_data, total_size=total_size,
                                                      val_size=val_size)
         spark = SparkSession.builder.appName('cross validation').getOrCreate()
-        spark.sparkContext.setLogLevel('ERROR')
+        spark.sparkContext.setLogLevel('WARN')  # ERROR, WARN
         spark.sparkContext.setCheckpointDir('./results/checkpoint')  # to avoid stack overflow
         logger.info('Successfully init a spark session')
         train_data = to_spark(spark, train_data, infer_schema=True)
