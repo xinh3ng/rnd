@@ -2,10 +2,4 @@ numpy
 scipy
 pandas
 flask
-kafka-python
-scrapy
-splash
-scrapy-splash
-apache-beam
-
 https://github.com/xinh3ng/pydsutils/raw/master/packages/pydsutils-0.7.0-py2.py3-none-any.whl
