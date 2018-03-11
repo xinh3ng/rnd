@@ -16,9 +16,13 @@ opencv-contrib-python
 #tensorflow
 keras
 gym
+nltk
 spacy
 gensim
 
 pyqt5
 spyder
 ipykernel
+
+https://github.com/xinh3ng/pydsutils/raw/master/packages/pydsutils-0.7.1-py2.py3-none-any.whl
+https://github.com/xinh3ng/pymlearn/raw/master/packages/pymlearn-0.7.2-py2.py3-none-any.whl
