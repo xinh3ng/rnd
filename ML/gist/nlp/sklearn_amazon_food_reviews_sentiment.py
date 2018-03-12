@@ -1,6 +1,6 @@
 #|/usr/bin/env python
 """
-https://www.kaggle.com/eugen1701/predicting-sentiment-and-helpfulness/notebook (sentiment analysus model)
+https://www.kaggle.com/eugen1701/predicting-sentiment-and-helpfulness/notebook (sentiment analysis model)
 https://www.kaggle.com/laowingkin/amazon-fine-food-review-sentiment-analysis/notebook (personalized food taste)
 """
 from pdb import set_trace as debug
@@ -8,8 +8,6 @@ import os
 import sqlite3
 import pandas as pd
 import re
-import matplotlib
-import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import BernoulliNB
@@ -19,6 +17,7 @@ from pydsutils.generic import create_logger
 
 logger = create_logger(__name__, level='info')
 line_width = 120
+
 
 def add_sentiment_score(data, verbose=0):
     data['Sentiment'] = data["Score"].apply(lambda score: 'positive' if score > 3 else 'negative')
@@ -57,6 +56,9 @@ def gen_x_tfidf(train_data, test_data, verbose=0):
     tfidf_transformer = TfidfTransformer()
     x_train_tfidf = tfidf_transformer.fit_transform(x_train_counts)
     word_features = count_vect.get_feature_names()
+    if verbose >= 1:
+        logger.info('Showing first and last 5 word features: %s, %s' % (str(word_features[:5]),
+                    str(word_features[-5:])))
 
     x_test_counts = count_vect.transform(test_data["Summary_Clean"])
     x_test_tfidf = tfidf_transformer.transform(x_test_counts)
@@ -90,7 +92,7 @@ SELECT
   HelpfulnessNumerator as VotesHelpful, 
   HelpfulnessDenominator as VotesTotal
 FROM Reviews 
-WHERE Score != 3
+WHERE Score != 3  -- score is between 1 and 5. 3 shows no directional emotion
 """)
 
     # Process data
