@@ -1,13 +1,7 @@
 numpy
 scipy
-six
-wheel
 pandas
 matplotlib
-pydot 
-graphviz
-tqdm
-grakn
 h5py
 scikit-learn
 opencv-python
