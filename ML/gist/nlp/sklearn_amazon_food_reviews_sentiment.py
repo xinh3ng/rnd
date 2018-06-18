@@ -90,7 +90,6 @@ ORDER BY RANDOM()
 LIMIT 3
 """)
     logger.info("Example raw data:\n%s" % raw.to_string(line_width=line_width))
-
     data = pd.read_sql_query(con=con,
                              sql="""
 SELECT 
@@ -126,6 +125,7 @@ WHERE Score != 3  -- score is between 1 and 5. 3 shows no directional emotion
         predictions = model.predict(x_train_tfidf)
         perf = metrics.classification_report(y_train, predictions,
             target_names=["positive", "negative"])
+
         logger.info("In-sample performance:\n%s\n" % perf)
 
         predictions = model.predict(x_val_tfidf)
