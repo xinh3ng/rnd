@@ -89,6 +89,7 @@ def fix_url(url):  # correct relative urls back to absolute urls
     else:
         return url
 
+
 def get_playlists(section):
     """returns list of list of
     { 'title': <playlist tile>, <link to all playlist videos> }"""
@@ -98,10 +99,9 @@ def get_playlists(section):
     soup = get_soup(section['link'])
     if soup is None: # no playlist, create dummy with default link
         url = f'{youtube_base}{parent_folder}{channel_name}/videos'
-        return [
-           {'title': 'No Playlists', 'link':url }]
-    atags = soup('a', class_='yt-uix-tile-link')
+        return [{"title": "No Playlists", "link": url}]
 
+    atags = soup('a', class_='yt-uix-tile-link')
     playlists = []
     for a in atags:  # find title and link
         title = a.text
@@ -112,8 +112,9 @@ def get_playlists(section):
     if not playlists:  # no playlists
         url = f'{youtube_base}/{parent_folder}{channel_name}/videos'
         return [{'title': 'No Playlists', 'link': url}]
+    else:
+        return playlists
 
-    return playlists
 
 def parse_video(vurl):
     # return dict of
