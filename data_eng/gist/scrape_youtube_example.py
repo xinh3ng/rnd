@@ -1,4 +1,4 @@
-#|/usr/bin/env python
+# |/usr/bin/env python
 """
 Example: https://teklern.blogspot.com/2018/06/web-scrape-youtube-channel-for-video.html
 
@@ -44,7 +44,7 @@ def get_soup(url):
        or None if site does not exist"""
 
     result = requests.get(url)
-    if result.status_code != 200: 
+    if result.status_code != 200:
         return None
     time.sleep(wait_between_requests)  # slow down to human speed
     return BeautifulSoup(result.text, "html.parser")
@@ -63,17 +63,16 @@ def channel_section_links(channel_name):
         url = f"{youtube_base}/channel/{channel_name}/playlists"
         soup = get_soup(url)
         if soup is None or "This channel does not exist." in soup.text:
-            raise ValueError(
-                "The channel does not exists: " + channel_name)
+            raise ValueError("The channel does not exists: " + channel_name)
         parent_folder = "channel/"
 
-    play_list_atags = \
-        soup.find_all("a",
-                      {"href": re.compile(f"{channel_name}/playlists")})
+    play_list_atags = soup.find_all("a", {"href": re.compile(f"{channel_name}/playlists")})
     # filter out non user play lists next
-    elements = \
-        [{"title": x.text.strip(),
-          "link": fix_url(x["href"])} for x in play_list_atags if x.span and ("shelf_id=0" not in x["href"])]
+    elements = [
+        {"title": x.text.strip(), "link": fix_url(x["href"])}
+        for x in play_list_atags
+        if x.span and ("shelf_id=0" not in x["href"])
+    ]
 
     # no sections, make up no sections section with default link
     if len(elements) == 0:
@@ -96,22 +95,22 @@ def get_playlists(section):
     global parent_folder
     logger.info(f"Getting playlists for section: {section['title']}")
 
-    soup = get_soup(section['link'])
-    if soup is None: # no playlist, create dummy with default link
-        url = f'{youtube_base}{parent_folder}{channel_name}/videos'
+    soup = get_soup(section["link"])
+    if soup is None:  # no playlist, create dummy with default link
+        url = f"{youtube_base}{parent_folder}{channel_name}/videos"
         return [{"title": "No Playlists", "link": url}]
 
-    atags = soup('a', class_='yt-uix-tile-link')
+    atags = soup("a", class_="yt-uix-tile-link")
     playlists = []
     for a in atags:  # find title and link
         title = a.text
-        if title != 'Liked videos': # skip these
-            url = fix_url(a['href'])
-            playlists.append({'title': title, 'link': url})
+        if title != "Liked videos":  # skip these
+            url = fix_url(a["href"])
+            playlists.append({"title": title, "link": url})
 
     if not playlists:  # no playlists
-        url = f'{youtube_base}/{parent_folder}{channel_name}/videos'
-        return [{'title': 'No Playlists', 'link': url}]
+        url = f"{youtube_base}/{parent_folder}{channel_name}/videos"
+        return [{"title": "No Playlists", "link": url}]
     else:
         return playlists
 
@@ -121,8 +120,7 @@ def parse_video(vurl):
     # title, link, views, publication_date,
     # description, short_link, likes, dislikes
 
-    d = {"link": vurl, "views": None, "short_link": vurl,
-         "likes": None, "dislikes": None}
+    d = {"link": vurl, "views": None, "short_link": vurl, "likes": None, "dislikes": None}
 
     # now get video page and pull information from it
     vsoup = get_soup(vurl)
@@ -130,9 +128,8 @@ def parse_video(vurl):
     o = vsoup.find("title")
     vtitle = o.text.strip()
     xending = " - YouTube"
-    d["title"] = vtitle[:-len(xending)] \
-        if vtitle.endswith(xending) else vtitle
-    logger.info(f"processing video '{d['title']}'" )
+    d["title"] = vtitle[: -len(xending)] if vtitle.endswith(xending) else vtitle
+    logger.info(f"processing video '{d['title']}'")
 
     # o is used in the code following to
     # catch missing data targets for scrapping
@@ -142,8 +139,7 @@ def parse_video(vurl):
         d["views"] = "".join(c for c in views if c in "0123456789")
 
     o = vsoup.find("strong", class_="watch-time-text")
-    d["publication_date"] = \
-        o.text[len("Published on ") - 1:] if o else ""
+    d["publication_date"] = o.text[len("Published on ") - 1 :] if o else ""
 
     o = vsoup.find("div", id="watch-description-text")
     d["description"] = o.text if o else ""
@@ -153,14 +149,12 @@ def parse_video(vurl):
         vid = o["content"]
         d["short_link"] = f"https://youtu.be/{vid}"
 
-    o = vsoup.find("button",
-                   class_="like-button-renderer-like-button")
+    o = vsoup.find("button", class_="like-button-renderer-like-button")
     if o:
         o = o.find("span", class_="yt-uix-button-content")
         d["likes"] = o.text if o else ""
 
-    o = vsoup.find("button",
-                   class_="like-button-renderer-dislike-button")
+    o = vsoup.find("button", class_="like-button-renderer-dislike-button")
     if o:
         o = o.find("span", class_="yt-uix-button-content")
         d["dislikes"] = o.text if o else ""
@@ -202,49 +196,50 @@ def add_videos(playlist):
     print()
 
 
-def tag(t,c):
+def tag(t, c):
     return f"<{t}>{c}</{t}>"  # return html tag with content
 
 
-def link(text, url): # return a tag with content and link
+def link(text, url):  # return a tag with content and link
     return f"<a href='{url}'>{text}</a>"
 
 
 def html_out(channel, sections):
     """create and write channel_name.html file"""
     title = f"YouTube Channel: {channel}"
-    f = open(f"/tmp/{channel}.html","w")
-    template = ('<!doctype html>\n<html lang="en">\n<head>\n'
-                '<meta charset="utf-8">'
-                '<title>{}</title>\n</head>\n'
-                '<body>\n{}\n</body>\n</html>')
+    f = open(f"/tmp/{channel}.html", "w")
+    template = (
+        '<!doctype html>\n<html lang="en">\n<head>\n'
+        '<meta charset="utf-8">'
+        "<title>{}</title>\n</head>\n"
+        "<body>\n{}\n</body>\n</html>"
+    )
 
     parts = list()
     parts.append(tag("h1", title))
 
     for s in sections:
-        parts.append(tag('h2',link(s['title'], s['link'])))
-        for pl in s['playlists']:
-            parts.append(tag('h3', link(pl['title'], pl['link'])))
+        parts.append(tag("h2", link(s["title"], s["link"])))
+        for pl in s["playlists"]:
+            parts.append(tag("h3", link(pl["title"], pl["link"])))
             if len(pl) == 0:
-                parts.append('<p>Empty Playlist</p>')
+                parts.append("<p>Empty Playlist</p>")
             else:
-                parts.append('<ol>')
-                for v in pl['videos']:
-                    t = '' if v['time'] == 'NA' else f" ({v['time']})"
-                    parts.append(tag('li', link(v['title'],
-                                     v['short_link']) + t))
-                parts.append('</ol>')
-    f.write(template.format(channel, '\n'.join(parts)))
+                parts.append("<ol>")
+                for v in pl["videos"]:
+                    t = "" if v["time"] == "NA" else f" ({v['time']})"
+                    parts.append(tag("li", link(v["title"], v["short_link"]) + t))
+                parts.append("</ol>")
+    f.write(template.format(channel, "\n".join(parts)))
     f.close()
 
 
 def csv_out(channel, sections):
     """ create and output channel_name.csv
     file for import into a spreadsheet or DB"""
-    headers = ("channel,section,playlist,video,"
-               "link,time,views,publication date,"
-               "likes,dislikes,description").split(",")
+    headers = (
+        "channel,section,playlist,video," "link,time,views,publication date," "likes,dislikes,description"
+    ).split(",")
 
     with open(f"/tmp/{channel}.csv", "w") as csv_file:
         csvf = csv.writer(csv_file, delimiter=",")
@@ -253,15 +248,18 @@ def csv_out(channel, sections):
             for playlist in section["playlists"]:
                 for video in playlist["videos"]:
                     v = video
-                    line = [channel,
-                            section["title"],
-                            playlist["title"],
-                            v["title"]]
-                    line.extend([v["short_link"],
-                                 v["time"], v["views"],
-                                 v["publication_date"],
-                                 v["likes"], v["dislikes"],
-                                 v["description"]])
+                    line = [channel, section["title"], playlist["title"], v["title"]]
+                    line.extend(
+                        [
+                            v["short_link"],
+                            v["time"],
+                            v["views"],
+                            v["publication_date"],
+                            v["likes"],
+                            v["dislikes"],
+                            v["description"],
+                        ]
+                    )
                     csvf.writerow(line)
 
 
@@ -294,7 +292,8 @@ if __name__ == "__main__":
 
     # create a csv file of video info for import into spreadsheet
     csv_out(channel_name, sections)
-    logger.info(f"Program Complete."
-                f"{channel_name}.json, {channel_name}.html and {channel_name}.csv are saved in /tmp/")
+    logger.info(
+        f"Program Complete." f"{channel_name}.json, {channel_name}.html and {channel_name}.csv are saved in /tmp/"
+    )
 
     logger.info("ALL DONE!\n")

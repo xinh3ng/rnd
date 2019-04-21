@@ -36,7 +36,9 @@ predictions = tensorflow.nn.sigmoid(af_input_output)
 
 
 # Measuring the prediction error of the network after being trained
-prediction_error = 0.5 * tensorflow.reduce_sum(tensorflow.subtract(predictions, training_outputs) * tensorflow.subtract(predictions, training_inputs))
+prediction_error = 0.5 * tensorflow.reduce_sum(
+    tensorflow.subtract(predictions, training_outputs) * tensorflow.subtract(predictions, training_inputs)
+)
 
 # Minimizing the prediction error using gradient descent optimizer
 train_op = tensorflow.train.GradientDescentOptimizer(0.05).minimize(prediction_error)
@@ -45,22 +47,17 @@ sess = tensorflow.Session()
 sess.run(tensorflow.global_variables_initializer())
 
 # Training data inputs
-training_inputs_data = [[1.0, 0.0],
-                        [1.0, 1.0],
-                        [0.0, 1.0],
-                        [0.0, 0.0]]
+training_inputs_data = [[1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]
 
 # Training data desired outputs
-training_outputs_data = [[1.0],
-                         [1.0],
-                         [0.0],
-                         [0.0]]
+training_outputs_data = [[1.0], [1.0], [0.0], [0.0]]
 
 # Training loop of the neural network
 for step in range(10000):
-    op, err, p = sess.run(fetches=[train_op, prediction_error, predictions],
-                          feed_dict={training_inputs: training_inputs_data,
-                                     training_outputs: training_outputs_data})
+    op, err, p = sess.run(
+        fetches=[train_op, prediction_error, predictions],
+        feed_dict={training_inputs: training_inputs_data, training_outputs: training_outputs_data},
+    )
     print(str(step), ": ", err)
 
 print("Expected class scores : ", sess.run(predictions, feed_dict={training_inputs: training_inputs_data}))

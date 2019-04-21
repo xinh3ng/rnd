@@ -1,4 +1,4 @@
-#|/usr/bin/env python
+# |/usr/bin/env python
 """
 """
 import os
@@ -11,11 +11,11 @@ from pydsutils.generic import create_logger
 
 logger = create_logger(__name__)
 
-nlp = spacy.load('en')
+nlp = spacy.load("en")
 
-print('Sanity test:')
-doc = nlp(u'I am a good programmer!')
+print("Sanity test:")
+doc = nlp("I am a good programmer!")
 print([t for t in doc])
 
 #
-logger.info('ALL DONE\n')
+logger.info("ALL DONE\n")

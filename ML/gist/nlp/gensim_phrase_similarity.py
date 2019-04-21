@@ -1,4 +1,4 @@
-#|/usr/bin/env python
+# |/usr/bin/env python
 
 """
 
@@ -16,6 +16,7 @@ from gensim.models import word2vec
 from random import sample
 from nltk.corpus import stopwords
 from pydsutils.generic import create_logger
+
 logger = create_logger(__name__, level="info")
 
 # Get a pretrained word vector

@@ -19,18 +19,15 @@ Explanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (m
 """
 from pdb import set_trace as debug
 
+
 class Solution(object):
     def rob(self, nums):
-    	return 10
+        return 10
 
 
-for nums in [[1,2,3,1],
-			 [2,7,9,3,1]
-			 ]:
-	v = Solution().rob(nums)
+for nums in [[1, 2, 3, 1], [2, 7, 9, 3, 1]]:
+    v = Solution().rob(nums)
 
-	print("\n%s: %d" %(str(nums), v))
+    print("\n%s: %d" % (str(nums), v))
 
 print("ALL DONE!\n")
-
-        

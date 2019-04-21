@@ -11,20 +11,15 @@ logger = create_logger(__name__, level="info")
 
 
 class GameState(object):
-    status_dict = {
-        1: "In progress",
-        2: "Player wins",
-        3: "Draw",
-        4: "Player loses"
-    }
+    status_dict = {1: "In progress", 2: "Player wins", 3: "Draw", 4: "Player loses"}
+
     def __init__(self, player_hand, dealer_hand, status):
         self.player_hand = player_hand
         self.dealer_hand = dealer_hand
         self.status = status
 
     def __str__(self):
-        return "(%s, %s, %s)" %(self.player_hand,
-                                self.dealer_hand, self.status)
+        return "(%s, %s, %s)" % (self.player_hand, self.dealer_hand, self.status)
 
     def read_status_string(self):
         """Read the game status as string
@@ -50,25 +45,25 @@ def usable_ace(hand):
     """
     val, ace = hand
     # accept a hand, if the Ace can be an 11 without busting the hand, it's usable
-    return ((ace) and ((val + 10) <= 21))
+    return (ace) and ((val + 10) <= 21)
 
 
 def total_value(hand):
     val, ace = hand
-    if (usable_ace(hand)):
-        return (val + 10)
+    if usable_ace(hand):
+        return val + 10
     return val
 
 
 def add_card(hand, card):
     val, ace = hand
-    if (card == 1):  # If card is ace
+    if card == 1:  # If card is ace
         ace = True
     return (val + card, ace)
 
 
 def eval_dealer(dealer_hand):
-    while (total_value(dealer_hand) < 17):
+    while total_value(dealer_hand) < 17:
         dealer_hand = add_card(dealer_hand, random_card())
     return dealer_hand
 
@@ -86,27 +81,27 @@ def play(state, action):
 
         player_tot = total_value(state.player_hand)
         dealer_tot = total_value(state.dealer_hand)
-        if (dealer_tot > 21):
+        if dealer_tot > 21:
             state.status = 2  # player wins
-        elif (dealer_tot == player_tot):
+        elif dealer_tot == player_tot:
             state.status = 3  # draw
-        elif (dealer_tot < player_tot):
+        elif dealer_tot < player_tot:
             state.status = 2
-        elif (dealer_tot > player_tot):
+        elif dealer_tot > player_tot:
             state.status = 4  # player loses
 
-    elif action == 1: # action = hit
+    elif action == 1:  # action = hit
         state.player_hand = add_card(state.player_hand, random_card())
         state.dealer_hand = eval_dealer(state.dealer_hand)
         player_tot = total_value(state.player_hand)
-        if (player_tot == 21):
-            if (total_value(state.dealer_hand) == 21):
+        if player_tot == 21:
+            if total_value(state.dealer_hand) == 21:
                 state.status = 3  # draw
             else:
                 state.status = 2  # player wins!
-        elif (player_tot > 21):
+        elif player_tot > 21:
             state.status = 4  # player loses
-        elif (player_tot < 21):
+        elif player_tot < 21:
             state.status = 1
     return state
 
@@ -156,6 +151,8 @@ def init_state_actions(states):
         av[(state, 0)] = 0.0
         av[(state, 1)] = 0.0
     return av
+
+
 #
 state = init_game()
 print(state)

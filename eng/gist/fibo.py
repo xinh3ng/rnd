@@ -11,7 +11,7 @@ def fibo(n):
         return 1
     if n == 2:
         return 1
-    return fibo(n-1) + fibo(n-2)
+    return fibo(n - 1) + fibo(n - 2)
 
 
 def fibo_memo(n):
@@ -22,6 +22,7 @@ def fibo_memo(n):
     """
     memory_map = {}
     assert n >= 1
+
     def helper(n):
         """helper function is the real fibonacci logic
         """
@@ -33,16 +34,17 @@ def fibo_memo(n):
         elif n == 2:
             memory_map[2] = 1
         else:
-            memory_map[n] = helper(n-1) + helper(n-2)
+            memory_map[n] = helper(n - 1) + helper(n - 2)
 
         return memory_map[n]
+
     return helper(n)
 
 
 for n in [1, 2, 3, 5, 40]:
-    print('fibo_memo(%3d) is: %d' %(n, fibo_memo(n)))
+    print("fibo_memo(%3d) is: %d" % (n, fibo_memo(n)))
 
 for n in [1, 2, 3, 5, 40]:
-    print('fibo(%3d) is: %d' %(n, fibo(n)))
+    print("fibo(%3d) is: %d" % (n, fibo(n)))
 
-print('ALL DONE!')
+print("ALL DONE!")
