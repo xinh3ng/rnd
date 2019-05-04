@@ -1,4 +1,5 @@
 # Document files
+.data/
 *.zip
 *.gz
 *.pdf
