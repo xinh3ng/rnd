@@ -1,4 +1,4 @@
-#|/usr/bin/env python
+# |/usr/bin/env python
 
 """
 http://outlace.com/rlpart1.html
@@ -9,15 +9,17 @@ import numpy as np
 from scipy import stats
 import random
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
 plt.style.use("ggplot")
 from pydsutils.generic import create_logger
 
 logger = create_logger(__name__, level="info")
 
 
-def reward(prob, n = 10):
+def reward(prob, n=10):
     """
 
     :param prob: Probability of winning
@@ -27,7 +29,7 @@ def reward(prob, n = 10):
     total = 0
     for i in range(n):
         if random.random() < prob:
-                total += 1
+            total += 1
         return total
 
 
@@ -38,7 +40,6 @@ def best_arm(av):
     :return:
     """
     return np.argmax(av)
-
 
 
 class EpsGreedyArmSelector(object):
@@ -57,9 +58,8 @@ class EpsGreedyArmSelector(object):
 
 
 class SoftmaxArmSelector(object):
-    def __init__(self, tau = 1.12):
+    def __init__(self, tau=1.12):
         self.tau = tau
-
 
     def choose(self, av, probs):
         choice = np.where(arms == np.random.choice(arms, p=probs))[0][0]
@@ -76,6 +76,7 @@ class SoftmaxArmSelector(object):
         probs = np.array([np.exp(av[i] / self.tau) / denominator for i in range(n)])
         return probs
 
+
 #################
 # Parameters
 ################
@@ -91,7 +92,7 @@ av = np.ones(n)  # action-value array
 counts = np.zeros(n)  # counts of how many times we've taken a particular action
 probs = (1.0 / n) * np.ones(n)  # initialize each action to have equal probability
 
-logger.info("%d arms are: %s" %(len(arms), arms))
+logger.info("%d arms are: %s" % (len(arms), arms))
 
 if algo_name == "eps_greedy":
     arm_selector = EpsGreedyArmSelector(eps=eps)
@@ -115,7 +116,7 @@ for round in range(num_rounds):
     plt.scatter(round, running_mean[round])
 
 max_arm = np.argmax(av)
-logger.info("Max arm is %d with av: %.4f" %(max_arm, av[max_arm]))
+logger.info("Max arm is %d with av: %.4f" % (max_arm, av[max_arm]))
 
 logger.info("running_mean is %s" % running_mean)
 plt.xlabel("Round of play")

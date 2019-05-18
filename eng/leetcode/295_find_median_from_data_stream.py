@@ -23,6 +23,7 @@ findMedian() -> 2
 from pdb import set_trace as debug
 import bisect
 
+
 class MedianFinder(object):
     def __init__(self):
         """
@@ -33,15 +34,16 @@ class MedianFinder(object):
     def addNum(self, num):
         # The bisect module implements an algorithm for inserting elements into a list while maintaining the list in sorted order.
         bisect.insort(self.values, num)
-    
+
     def findMedian(self):
         values_length = len(self.values)
         index = values_length // 2
-        
+
         if values_length % 2 == 0:
-            return (self.values[index-1] + self.values[index]) / 2
+            return (self.values[index - 1] + self.values[index]) / 2
         else:
             return float(self.values[index])
+
 
 # Your MedianFinder object will be instantiated and called as such:
 # ds: Data Stream
@@ -61,6 +63,3 @@ ds = MedianFinder()
 for x in [-1, -2, -3, -4, -5]:
     ds.addNum(x)
     print(ds.findMedian())
-
-
-

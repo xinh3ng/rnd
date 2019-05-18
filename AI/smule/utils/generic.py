@@ -13,24 +13,31 @@ def retry(n_try, sleep=1, *exception_types):
     :param sleep: Delay in seconds. Default=1
     :param exceptionType: Types of exceptions
     """
+
     def try_fn(func, *args, **kwargs):
         for n in range(n_try):
             try:
                 return func(*args, **kwargs)
             except exception_types or Exception as e:
-                print('Trial {n} failed with exception: {e} .\nTrying again after a {sleep} second sleep'.format(
-                    n=n, e=str(e), sleep=sleep))
+                print(
+                    "Trial {n} failed with exception: {e} .\nTrying again after a {sleep} second sleep".format(
+                        n=n, e=str(e), sleep=sleep
+                    )
+                )
                 time.sleep(sleep)
+
     return try_fn
 
 
-def create_logger(name,
-                  level='info',
-                  fmt='%(asctime)s %(levelname)s %(name)s: %(message)s',
-                  datefmt='%y-%m-%d %H:%M:%S',
-                  add_console_handler=True,
-                  add_file_handler=False,
-                  logfile='/tmp/tmp.log'):
+def create_logger(
+    name,
+    level="info",
+    fmt="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    datefmt="%y-%m-%d %H:%M:%S",
+    add_console_handler=True,
+    add_file_handler=False,
+    logfile="/tmp/tmp.log",
+):
     """Create a formatted logger at module level
 
     :param fmt: Format of the log message
@@ -39,10 +46,7 @@ def create_logger(name,
     logger = create_logger(__name__, level='info')
     logger.info('Hello world')
     """
-    level = {
-        'debug': logging.DEBUG, 'info': logging.INFO,
-        'warn': logging.WARN, 'error': logging.ERROR
-    }[level]
+    level = {"debug": logging.DEBUG, "info": logging.INFO, "warn": logging.WARN, "error": logging.ERROR}[level]
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -71,16 +75,17 @@ def to_spark(spark, data, infer_schema=False, schema=None):
         infer_schema: Wheter to infer data type, Default is False
         schema:
     """
+
     def find_type(x):
-        if x.dtype in ['object', 'str']:
+        if x.dtype in ["object", "str"]:
             return T.StringType()
-        elif x.dtype == 'int':
+        elif x.dtype == "int":
             return T.IntegerType()
-        elif x.dtype == 'float':
+        elif x.dtype == "float":
             return T.FloatType()
-        elif x.dtype == 'bool':
+        elif x.dtype == "bool":
             return T.BooleanType()
-        raise TypeError('%s type is unknown' %(x.dtype))
+        raise TypeError("%s type is unknown" % (x.dtype))
 
     if infer_schema:
         schema = T.StructType([T.StructField(str(col), find_type(data[col])) for col in data.columns])

@@ -5,7 +5,7 @@ from smule.utils.generic import create_logger
 logger = create_logger(__name__)
 
 
-def random_split_by_user(spark, data, val_size, user_col='user_id', seed=None):
+def random_split_by_user(spark, data, val_size, user_col="user_id", seed=None):
     """Randomly split the sammple by user
 
     Args:

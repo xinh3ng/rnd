@@ -1,0 +1,9 @@
+black
+gensim
+numpy
+pandas
+pytest
+scikit-learn
+spacy
+torch 
+torchvision

@@ -38,10 +38,13 @@ class NestCamAccess(object):
         client_id, client_secret = _read_client_secret(self.secret_file)
 
         # Create payload
-        payload = "code={auth_code}&client_id={client_id}&client_secret={client_secret}" \
-                  "&grant_type=authorization_code"\
-            .format(auth_code=self.auth_code, client_id=client_id, client_secret=client_secret)
-        headers = {'content-type': "application/x-www-form-urlencoded"}
+        payload = (
+            "code={auth_code}&client_id={client_id}&client_secret={client_secret}"
+            "&grant_type=authorization_code".format(
+                auth_code=self.auth_code, client_id=client_id, client_secret=client_secret
+            )
+        )
+        headers = {"content-type": "application/x-www-form-urlencoded"}
 
         # Make a connection
         conn = http.client.HTTPSConnection("api.home.nest.com")
@@ -64,7 +67,7 @@ def get_access_token(is_refresh=False, secret_file=""):
 
 def get_device_status(access_token):
     conn = http.client.HTTPSConnection("developer-api.nest.com")
-    headers = {'authorization': "Bearer {0}".format(access_token)}
+    headers = {"authorization": "Bearer {0}".format(access_token)}
     conn.request("GET", "/", headers=headers)
     response = conn.getresponse()
 
@@ -83,10 +86,7 @@ def get_device_status(access_token):
 def get_data_stream(access_token, access_token="https://developer-api.nest.com"):
     """ Start REST streaming device events given a Nest access_token.
     """
-    headers = {
-        "Authorization": "Bearer {0}".format(access_token),
-        "Accept": "text/event-stream"
-    }
+    headers = {"Authorization": "Bearer {0}".format(access_token), "Accept": "text/event-stream"}
     response = requests.get(access_token, headers=headers, stream=True)
     client = sseclient.SSEClient(response)
 
@@ -100,7 +100,7 @@ def get_data_stream(access_token, access_token="https://developer-api.nest.com")
             print("data: ", event.data)
         elif event_type == "keep-alive":
             logger.info("No data updates. Receiving an HTTP header to keep the connection open.")
-        elif event_type == 'auth_revoked':
+        elif event_type == "auth_revoked":
             logger.error("The API authorization has been revoked.")
             print("revoked access_token: ", event.data)
         elif event_type == "error":
@@ -122,6 +122,3 @@ if __name__ == "__main__":
     logger.info("Status data: %s" % status_data)
 
     get_data_stream(access_token, access_token="https://developer-api.nest.com")
-
-
-

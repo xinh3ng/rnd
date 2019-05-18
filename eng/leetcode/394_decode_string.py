@@ -28,13 +28,13 @@ class SolutionOne(object):
         num = ""
         for ch in s:
             if ch.isdigit():
-              num += ch
-            elif ch == '[':
+                num += ch
+            elif ch == "[":
                 stack.append(["", int(num)])
                 num = ""
-            elif ch == ']':
+            elif ch == "]":
                 st, k = stack.pop()
-                stack[-1][0] += st*k
+                stack[-1][0] += st * k
             else:
                 stack[-1][0] += ch
         return stack[0][0]
@@ -46,6 +46,7 @@ class Solution(object):
     - identify location of the pairing ]
     - identify the proceeeding digits
     """
+
     def decodeString(self, s):
         text = s
         print("\n" + text)
@@ -58,13 +59,12 @@ class Solution(object):
                     if pos_num is None:  # Record the starting position of a numerical
                         pos_num = pos
                 elif ch == "[":
-                    pos_right_bracket = self.locate_right_bracket(text, pos+1)
-                    replacement = text[(pos+1):pos_right_bracket] * int(num)
-                    text = text[0:pos_num] + replacement + text[(pos_right_bracket+1):] 
+                    pos_right_bracket = self.locate_right_bracket(text, pos + 1)
+                    replacement = text[(pos + 1) : pos_right_bracket] * int(num)
+                    text = text[0:pos_num] + replacement + text[(pos_right_bracket + 1) :]
                     print(text)
                     break  # Exit the for loop, i.e. return to the while loop
         return text
-
 
     def locate_right_bracket(self, text, start_pos=0):
         """
@@ -76,26 +76,25 @@ class Solution(object):
             if ch == "[":
                 cnt_left_bracket += 1
 
-            if ch == "]": 
+            if ch == "]":
                 if cnt_left_bracket > 0:
                     cnt_left_bracket -= 1
                 else:  # The return condition: ch == "]" and count of left bracket is 0
                     return pos
         raise AssertionError("Should not reach this place")
 
+
 ########################################
 
 for s, answer in [
-          ("10[a]", "aaaaaaaaaa"),
-          ("3[a]2[bc]", "aaabcbc"),
-	      ("3[a2[c]]",  "accaccacc"),
-	      ("2[abc]3[cd]ef",  "abcabccdcdcdef")
-	      ]:
-	result = Solution().decodeString(s)
-	
-	print("%-20s: %s" % (s, result))
-	assert result == answer
+    ("10[a]", "aaaaaaaaaa"),
+    ("3[a]2[bc]", "aaabcbc"),
+    ("3[a2[c]]", "accaccacc"),
+    ("2[abc]3[cd]ef", "abcabccdcdcdef"),
+]:
+    result = Solution().decodeString(s)
+
+    print("%-20s: %s" % (s, result))
+    assert result == answer
 
 print("ALL DONE!\n")
-
-

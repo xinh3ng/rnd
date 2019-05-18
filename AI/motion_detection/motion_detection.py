@@ -17,6 +17,7 @@ logger = create_logger(__name__, level="info")
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--video_file", default="")
     parser.add_argument("--min_area", type=int, default=500, help="minimum area size")
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     algo_map = {
         "ImageDiffAlgo": ImageDiffAlgo(video, image_width, do_blur),
         "MIL": OpencvOemAlgo(video, image_width, tracking_algo_name="MIL"),
-        "KCF": OpencvOemAlgo(video, image_width, tracking_algo_name="KCF")
+        "KCF": OpencvOemAlgo(video, image_width, tracking_algo_name="KCF"),
     }
     algo = algo_map[algo_name]
     algo.run()

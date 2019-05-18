@@ -20,10 +20,10 @@ from smule.utils.generic import create_logger, to_spark
 from smule.utils import data_utils as DU
 from smule.models.models import MFALSOperator
 
-logger = create_logger(__name__, level='info')
+logger = create_logger(__name__, level="info")
 
 
-def get_item_factors(model_fit, column='item_id', verbose=0):
+def get_item_factors(model_fit, column="item_id", verbose=0):
     """Get the item latent factors from model_fit
 
     Args
@@ -32,11 +32,13 @@ def get_item_factors(model_fit, column='item_id', verbose=0):
         column: Name of the item column
     """
     # distinct() because an item might show in multiple rows in data
-    factor_df = model_fit.itemFactors.select(F.col('id').alias(column),
-                                             F.col('features').alias('factors'))\
-        .distinct().orderBy(F.asc(column))
+    factor_df = (
+        model_fit.itemFactors.select(F.col("id").alias(column), F.col("features").alias("factors"))
+        .distinct()
+        .orderBy(F.asc(column))
+    )
     if verbose >= 1:
-        logger.info('Showing 20 random rows of item factor data:')
+        logger.info("Showing 20 random rows of item factor data:")
         factor_df.sample(False, 0.1).show(20, False)
     return factor_df
 
@@ -52,11 +54,11 @@ def normalized_dot_product(l, r):
     # Numerator is v1 dot v2
     numer = sum([i[0] * i[1] for i in zip(l, r)])
     # calculate denominator
-    denom = math.sqrt(sum([i*i for i in l])) * math.sqrt(sum([i*i for i in r]))
+    denom = math.sqrt(sum([i * i for i in l])) * math.sqrt(sum([i * i for i in r]))
     return numer / denom
 
 
-def calc_item_similarity(data, item_col='item_id', factor_col='factors', verbose=0):
+def calc_item_similarity(data, item_col="item_id", factor_col="factors", verbose=0):
     """Calculate item-item cosine similarity
 
     Args:
@@ -68,13 +70,16 @@ def calc_item_similarity(data, item_col='item_id', factor_col='factors', verbose
     dot_udf = F.udf(lambda x, y: float(normalized_dot_product(x, y)), T.DoubleType())
 
     # Generate 2 columns of item IDs (w/o duplicates) and calculate dot product on each row
-    df = data.alias('left').join(data.alias('right'),
-                                 F.col('left.{}'.format(item_col)) < F.col('right.{}'.format(item_col)))\
+    df = (
+        data.alias("left")
+        .join(data.alias("right"), F.col("left.{}".format(item_col)) < F.col("right.{}".format(item_col)))
         .select(
-            F.col('left.{}'.format(item_col)).alias('i'),
-            F.col('right.{}'.format(item_col)).alias('j'),
-            dot_udf('left.{}'.format(factor_col), 'right.{}'.format(factor_col)).alias('similarity'))\
-        .sort('i', 'j')
+            F.col("left.{}".format(item_col)).alias("i"),
+            F.col("right.{}".format(item_col)).alias("j"),
+            dot_udf("left.{}".format(factor_col), "right.{}".format(factor_col)).alias("similarity"),
+        )
+        .sort("i", "j")
+    )
 
     if verbose >= 1:
         logger.info("Showing item similarity:")
@@ -93,35 +98,39 @@ def main(src_data_file, total_size):
 
     raw = DU.load_process_raw(src_data_file)
     full_mf_data = DU.gen_mf_data(raw, verbose=1)
-    mf_data, _ = train_test_split(full_mf_data, test_size=1. - total_size)  # Throw away some to speed up training
+    mf_data, _ = train_test_split(full_mf_data, test_size=1.0 - total_size)  # Throw away some to speed up training
 
-    spark = SparkSession.builder.appName('refresh model').getOrCreate()
-    spark.sparkContext.setCheckpointDir('./results/checkpoint')  # Set checkpoint to avoid stack overflow
-    spark.sparkContext.setLogLevel('ERROR')
-    logger.info('Successfully init a spark session')
+    spark = SparkSession.builder.appName("refresh model").getOrCreate()
+    spark.sparkContext.setCheckpointDir("./results/checkpoint")  # Set checkpoint to avoid stack overflow
+    spark.sparkContext.setLogLevel("ERROR")
+    logger.info("Successfully init a spark session")
     mf_data = to_spark(spark, mf_data, infer_schema=True)
-    logger.info('Successfully converted to spark df')
+    logger.info("Successfully converted to spark df")
 
     model_op = MFALSOperator(params)
     model_fit = model_op.fit_model(mf_data, verbose=1)
-    logger.info('Successfully fit model')
+    logger.info("Successfully fit model")
 
     item_factors = get_item_factors(model_fit, column=DC.item_col, verbose=1)
-    item_similarities = calc_item_similarity(item_factors, item_col=DC.item_col, factor_col='factors',
-                                             verbose=1)
+    item_similarities = calc_item_similarity(item_factors, item_col=DC.item_col, factor_col="factors", verbose=1)
     # Save result as csv
-    logger.info('Saving item similarities table to ./results/item_similarities')
-    item_similarities.write.csv('./results/item_similarities', mode='overwrite', header=True, sep='|')
+    logger.info("Saving item similarities table to ./results/item_similarities")
+    item_similarities.write.csv("./results/item_similarities", mode="overwrite", header=True, sep="|")
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument('--src_data_file', default='{}/data/smule/incidences_piano.tsv'.format(os.environ['HOME']))
-    parser.add_argument('--total_size', type=float, default=0.1,
-        help='Percentage of total data belongs to entire process. Small size speeds up things')
+    parser.add_argument("--src_data_file", default="{}/data/smule/incidences_piano.tsv".format(os.environ["HOME"]))
+    parser.add_argument(
+        "--total_size",
+        type=float,
+        default=0.1,
+        help="Percentage of total data belongs to entire process. Small size speeds up things",
+    )
 
     args = parser.parse_args()
     main(**vars(args))
-    logger.info('ALL DONE\n')
+    logger.info("ALL DONE\n")

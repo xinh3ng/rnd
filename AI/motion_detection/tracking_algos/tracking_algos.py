@@ -49,7 +49,7 @@ def diff_image_trio(images):
     :return:
     """
     d2 = cv2.absdiff(images[2], images[1])
-    d1= cv2.absdiff(images[1], images[0])
+    d1 = cv2.absdiff(images[1], images[0])
     return cv2.bitwise_and(d1, d2)
 
 
@@ -73,12 +73,10 @@ class ImageDiffAlgo(object):
         # Grab the first 2 frames
         _, color_frame = self.video.read()
         ci = process_color_image(color_frame, self.image_width)
-        first_recent_gray = process_gray_image(cv2.cvtColor(ci, cv2.COLOR_BGR2GRAY),
-                                               do_blur=self.do_blur)
+        first_recent_gray = process_gray_image(cv2.cvtColor(ci, cv2.COLOR_BGR2GRAY), do_blur=self.do_blur)
         _, color_frame = self.video.read()
         ci = process_color_image(color_frame, self.image_width)
-        gray_frame = process_gray_image(cv2.cvtColor(ci, cv2.COLOR_BGR2GRAY),
-                                        do_blur=self.do_blur)
+        gray_frame = process_gray_image(cv2.cvtColor(ci, cv2.COLOR_BGR2GRAY), do_blur=self.do_blur)
 
         # Grab frames continuously
         while True:
@@ -90,8 +88,7 @@ class ImageDiffAlgo(object):
             second_recent_gray = first_recent_gray
             first_recent_gray = gray_frame
             color_frame = process_color_image(color_frame, self.image_width)
-            gray_frame = process_gray_image(cv2.cvtColor(color_frame, cv2.COLOR_BGR2GRAY),
-                                            do_blur=self.do_blur)
+            gray_frame = process_gray_image(cv2.cvtColor(color_frame, cv2.COLOR_BGR2GRAY), do_blur=self.do_blur)
             # Take a image difference and threshold it
             frame_delta = diff_image_pair((first_recent_gray, gray_frame))
             # frame_delta = diff_image_trio((second_recent_gray, first_recent_gray, gray_frame))
@@ -111,9 +108,8 @@ class ImageDiffAlgo(object):
 
 class OpencvOemAlgo(object):
 
-    tracker_init_fns = {
-        "MIL": cv2.TrackerMIL_create
-    }
+    tracker_init_fns = {"MIL": cv2.TrackerMIL_create}
+
     def __init__(self, video, image_width, tracking_algo_name="MIL"):
         self.video = video
         self.image_width = image_width
