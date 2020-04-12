@@ -72,7 +72,7 @@ def load_dataset(data_file: str, subsample_pct: float = 0.5):
     logger.info(f"Loading data from {data_file}...")
     dataset = pd.read_csv(data_file, sep=",")
 
-    samples = dataset.sample(len(dataset) * subsample_pct)
+    samples = dataset.sample(int(len(dataset) * subsample_pct))
     train_set, test_set = create_sudoku_tensors(samples)
     return train_set, test_set
 
@@ -91,9 +91,13 @@ class SudokuSolver(nn.Module):
         self.a1 = nn.ReLU()
         self.l2 = nn.Linear(self.hidden1, n, bias=False)
         self.softmax = nn.Softmax(dim=1)
-        # x is a (batch, n^2, n) tensor
 
     def forward(self, x, verbose: int = 1):
+        """
+        Args:
+            x: a tensor of (batch, n^2, n)
+            verbose (int, optional)
+        """
         n = self.n
         bts = x.shape[0]  # batch_size
         c = self.constraint_mask
