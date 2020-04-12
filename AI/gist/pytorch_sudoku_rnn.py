@@ -1,6 +1,7 @@
 """
 
 """
+import os
 import torch.utils.data as data
 import torch
 import pandas as pd
@@ -57,8 +58,8 @@ def create_constraint_mask():
     return constraint_mask
 
 
-def load_dataset(subsample=10000):
-    dataset = pd.read_csv("sudoku.csv", sep=",")
+def load_dataset(data_file: str = "sudoku.csv", subsample: int = 10000):
+    dataset = pd.read_csv(data_file, sep=",")
     my_sample = dataset.sample(subsample)
     train_set, test_set = create_sudoku_tensors(my_sample)
     return train_set, test_set
@@ -66,4 +67,4 @@ def load_dataset(subsample=10000):
 
 if __name__ == "__main__":
 
-    load_dataset()
+    load_dataset("{}/data/sudoku.csv".format(os.environ.get("HOME")))
