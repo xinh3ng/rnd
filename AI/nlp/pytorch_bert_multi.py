@@ -199,8 +199,8 @@ def main(
                     running_loss += loss.item() * inputs.size(0)
                     sentiment_corrects += torch.sum(torch.max(outputs, 1)[1] == torch.max(sentiment, 1)[1])
                 
-                if batch_idx % 10 == 0:
-                    logger.info(f"Finished batch index: {batch_index}")
+                if batch_idx % 500 == 0:
+                    logger.info(f"Finished batch index: {batch_idx}")
 
             # 
             epoch_loss = running_loss / dataset_sizes[phase]
