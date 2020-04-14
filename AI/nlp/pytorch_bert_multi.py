@@ -11,7 +11,7 @@ import os
 import numpy as np
 import pandas as pd
 from pypchutils.generic import create_logger
-from pytorch_transformers import BertTokenizer, BertConfig, BertModel
+from transformers import BertTokenizer, BertConfig, BertModel
 from sklearn.model_selection import train_test_split
 import torch
 import torch.utils.data as data
@@ -67,7 +67,7 @@ class TextDataset(data.Dataset):
 
 
 class BertForSequenceClassification(nn.Module):
-    def __init__(self, config, num_labels: int = 2, pre_trained: str = "bert_based_uncased"):
+    def __init__(self, config, num_labels: int = 2, pre_trained: str = "bert-base-uncased"):
         super(BertForSequenceClassification, self).__init__()
         self.num_labels = num_labels
         self.bert = BertModel.from_pretrained(pre_trained)
@@ -102,7 +102,7 @@ def load_train_test_sets(filepath: str = "IMDB Dataset.csv", test_size: float = 
 
 def main(
     data_file: str,
-    pre_trained: str = "bert_based_uncased",
+    pre_trained: str = "bert-base-uncased",
     num_labels: int = 2,
     batch_size: int = 16,
     epochs: int = 5,
@@ -111,6 +111,7 @@ def main(
     lrmain: float = 0.00001,
 ):
     tokenizer = BertTokenizer.from_pretrained(pre_trained)
+    # tokenizer = torch.hub.load("huggingface/pytorch-transformers", "tokenizer", pre_trained)
 
     X_train, X_test, y_train, y_test = load_train_test_sets(data_file)
     train_lists = [X_train, y_train]
