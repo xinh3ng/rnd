@@ -141,7 +141,7 @@ def main(
     criterion = nn.CrossEntropyLoss()
 
     # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+    lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
     for epoch_index in range(epochs):
         logger.info("Epoch {}/{}".format(epoch_index, epochs - 1))
@@ -150,7 +150,7 @@ def main(
         # Each epoch_index has a training and validation phase
         for phase in ["train", "val"]:
             if phase == "train":
-                exp_lr_scheduler.step()
+
                 model.train()  # Set model to training mode
             else:
                 model.eval()  # Set model to evaluate mode
@@ -172,6 +172,7 @@ def main(
                     if phase == "train":
                         loss.backward()
                         optimizer.step()
+                        lr_scheduler.step()
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
