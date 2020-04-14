@@ -44,7 +44,6 @@ def load_train_test_sets(filepath: str = "IMDB Dataset.csv", test_size: float = 
 
 
 
-
 class TextDataset(data.Dataset):
     """
     a custom dataset class that uses the BERT tokenizer to map batches of text data to a tensor of its
@@ -61,18 +60,23 @@ class TextDataset(data.Dataset):
     def __getitem__(self, index):
         """Return the tensors for the review and positive/negative labels
         """
-        tokenized = self.tokenizer.tokenize(self.xy[0][index])
-        tokenized = tokenized[: self.max_seq_length] if len(tokenized) > self.max_seq_length else tokenized
+        
+        try: 
+            tokenized = self.tokenizer.tokenize(self.xy[0][index])
+            tokenized = tokenized[: self.max_seq_length] if len(tokenized) > self.max_seq_length else tokenized
 
-        ids = self.tokenizer.convert_tokens_to_ids(tokenized)
+            ids = self.tokenizer.convert_tokens_to_ids(tokenized)
 
-        padding = [0] * (self.max_seq_length - len(ids))
-        ids += padding
-        assert len(ids) == self.max_seq_length
-
-        ids = torch.tensor(ids)
-        labels = [torch.from_numpy(np.array(self.xy[1][index]))]
-        return ids, labels[0]
+            padding = [0] * (self.max_seq_length - len(ids))
+            ids += padding
+            assert len(ids) == self.max_seq_length
+            
+            ids = torch.tensor(ids)
+            labels = torch.from_numpy(np.array(self.xy[1][index]))
+            return ids, labels[0]
+        except Exception as e:
+            # logger.warning(f"Ercor mesg: {str(e)}, skipping")
+            return torch.tensor([]), torch.from_numpy(np.array(self.xy[1][0]))
 
     def __len__(self):
         return len(self.xy[0])
@@ -125,10 +129,11 @@ def main(
     test_dataset = TextDataset(test_lists, tokenizer=tokenizer)
 
     dataloaders_dict = {
-        "train": torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0),
-        "val": torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=0),
+        "train": torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=0),
+        "val": torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0),
     }
     dataset_sizes = {"train": len(train_lists[0]), "val": len(test_lists[0])}
+    logger.info(f"dataset_sizes: {dataset_sizes}")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     logger.info(f"Device is {device}")
@@ -148,19 +153,25 @@ def main(
     lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
     for epoch_index in range(epochs):
+        logger.info("#" * 15)
         logger.info("Epoch {}/{}".format(epoch_index, epochs - 1))
-        logger.info("-" * 10)
-
+        logger.info("#" * 15)
+        
         # Each epoch_index has a training and validation phase
+        batch_idx = 0
         for phase in ["train", "val"]:
             if phase == "train":
-
                 model.train()  # Set model to training mode
             else:
                 model.eval()  # Set model to evaluate mode
 
             running_loss, sentiment_corrects = 0.0, 0
             for inputs, sentiment in dataloaders_dict[phase]:  # Iterate over data.
+                if phase == "train":
+                    batch_idx += 1
+                if inputs.size(0) == 0:
+                    continue
+
                 inputs = inputs.to(device)
                 sentiment = sentiment.to(device)
                 optimizer.zero_grad()  # zero the parameter gradients
@@ -168,20 +179,30 @@ def main(
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == "train"):
-                    outputs = model(inputs)
-                    outputs = F.softmax(outputs, dim=1)
-                    loss = criterion(outputs, torch.max(sentiment.float(), 1)[1])
+                    
+                    try:
+                        outputs = model(inputs)
+                        outputs = F.softmax(outputs, dim=1)
+                        loss = criterion(outputs, torch.max(sentiment.float(), 1)[1])
 
-                    # backward + optimize only if in training phase
-                    if phase == "train":
-                        loss.backward()
-                        optimizer.step()
-                        lr_scheduler.step()
-
+                        # backward + optimize only if in training phase
+                        if phase == "train":
+                            loss.backward()
+                            optimizer.step()
+                            lr_scheduler.step()
+                    except Exception as e:
+                        # logger.warning(f"Ercor mesg: {str(e)}, skipping")
+                        loss = None
+                
                 # statistics
-                running_loss += loss.item() * inputs.size(0)
-                sentiment_corrects += torch.sum(torch.max(outputs, 1)[1] == torch.max(sentiment, 1)[1])
+                if loss is not None:
+                    running_loss += loss.item() * inputs.size(0)
+                    sentiment_corrects += torch.sum(torch.max(outputs, 1)[1] == torch.max(sentiment, 1)[1])
+                
+                if batch_idx % 10 == 0:
+                    logger.info(f"Finished batch index: {batch_index}")
 
+            # 
             epoch_loss = running_loss / dataset_sizes[phase]
             sentiment_acc = sentiment_corrects.double() / dataset_sizes[phase]
 
