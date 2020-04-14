@@ -59,6 +59,7 @@ class TextDataset(data.Dataset):
 
         ids = torch.tensor(ids)
 
+        breakpoint()
         labels = [torch.from_numpy(np.array(self.xy[1][index]))]
         return ids, labels[0]
 
@@ -128,7 +129,7 @@ def main(
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     logger.info(f"Device is {device}")
 
-    model = BertForSequenceClassification(config=config, num_labels=num_labels)
+    model = BertForSequenceClassification(config=config, num_labels=num_labels, pre_trained=pre_trained)
     best_model_wts = copy.deepcopy(model.state_dict())
     optim1 = optim.Adam(
         [{"params": model.bert.parameters(), "lr": lrmain}, {"params": model.classifier.parameters(), "lr": lrlast}]
