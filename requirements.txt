@@ -3,7 +3,9 @@ gensim
 numpy
 pandas
 pytest
+pytest-cov
 scikit-learn
 spacy
 torch 
 torchvision
+transformers
