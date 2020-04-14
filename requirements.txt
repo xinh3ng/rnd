@@ -2,7 +2,9 @@ black
 gensim
 numpy
 pandas
+pytorch_transformers
 pytest
+pytest-cov
 scikit-learn
 spacy
 torch 
