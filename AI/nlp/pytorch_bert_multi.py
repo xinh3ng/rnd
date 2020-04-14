@@ -114,7 +114,7 @@ def main(
     pre_trained: str = "bert-base-uncased",
     num_labels: int = 2,
     batch_size: int = 16,
-    epochs: int = 5,
+    epochs: int = 25,
     best_loss: int = 100,
     lrlast: float = 0.001,
     lrmain: float = 0.00001,
@@ -129,8 +129,8 @@ def main(
     test_dataset = TextDataset(test_lists, tokenizer=tokenizer)
 
     dataloaders_dict = {
-        "train": torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=0),
-        "val": torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0),
+        "train": torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0),
+        "val": torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=0),
     }
     dataset_sizes = {"train": len(train_lists[0]), "val": len(test_lists[0])}
     logger.info(f"dataset_sizes: {dataset_sizes}")
@@ -203,8 +203,8 @@ def main(
                     logger.info(f"Finished batch index: {batch_idx}")
 
             # 
-            epoch_loss = running_loss / dataset_sizes[phase]
-            sentiment_acc = sentiment_corrects.double() / dataset_sizes[phase]
+            epoch_loss = float(running_loss) / dataset_sizes[phase]
+            sentiment_acc = float(sentiment_corrects) / dataset_sizes[phase]
 
             logger.info("{} total loss: {:.4f} ".format(phase, epoch_loss))
             logger.info("{} sentiment_acc: {:.4f}".format(phase, sentiment_acc))
