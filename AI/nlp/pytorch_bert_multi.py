@@ -32,6 +32,19 @@ config = BertConfig(
 )
 
 
+def load_train_test_sets(filepath: str = "IMDB Dataset.csv", test_size: float = 0.10, random_state: int = 42):
+    data = pd.read_csv(filepath)
+    # Sentiment score must be numeric
+    data["sent_score"] = 1
+    data.loc[data.sentiment == "negative", "sent_score"] = 0
+
+    X, y = data["review"], data["sent_score"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+    return X_train, X_test, y_train, y_test
+
+
+
+
 class TextDataset(data.Dataset):
     """
     a custom dataset class that uses the BERT tokenizer to map batches of text data to a tensor of its
@@ -58,8 +71,6 @@ class TextDataset(data.Dataset):
         assert len(ids) == self.max_seq_length
 
         ids = torch.tensor(ids)
-
-        breakpoint()
         labels = [torch.from_numpy(np.array(self.xy[1][index]))]
         return ids, labels[0]
 
@@ -92,13 +103,6 @@ class BertForSequenceClassification(nn.Module):
     def unfreeze_bert_encoder(self):
         for param in self.bert.parameters():
             param.requires_grad = True
-
-
-def load_train_test_sets(filepath: str = "IMDB Dataset.csv", test_size: float = 0.10, random_state: int = 42):
-    data = pd.read_csv(filepath)
-    X, y = data["review"], data["sentiment"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-    return X_train, X_test, y_train, y_test
 
 
 def main(
