@@ -1,8 +1,9 @@
 """
 
 # Links
-https://towardsdatascience.com/bert-classifier-just-another-pytorch-model-881b3cf05784
-https://engineering.wootric.com/when-bert-meets-pytorch
+https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
+
+python AI/cv/pytorch_object_maskrcnn.py --root=${HOME}/data/PennFudanPed
 
 """
 import copy
@@ -147,7 +148,7 @@ def main(root: str, num_classes: int = 2, epochs: int = 10):
     optimizer = torch.optim.SGD(params, lr=0.005, momentum=0.9, weight_decay=0.0005)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
-    for epoch in range(num_epochs):
+    for epoch in range(epochs):
         train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq=10)
         lr_scheduler.step()  # update the learning rate
         evaluate(model, data_loader_test, device=device)  # evaluate on the test dataset
