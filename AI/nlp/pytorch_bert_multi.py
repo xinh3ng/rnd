@@ -43,7 +43,6 @@ def load_train_test_sets(filepath: str = "IMDB Dataset.csv", test_size: float = 
     return X_train, X_test, y_train, y_test
 
 
-
 class TextDataset(data.Dataset):
     """
     a custom dataset class that uses the BERT tokenizer to map batches of text data to a tensor of its
@@ -60,8 +59,8 @@ class TextDataset(data.Dataset):
     def __getitem__(self, index):
         """Return the tensors for the review and positive/negative labels
         """
-        
-        try: 
+
+        try:
             tokenized = self.tokenizer.tokenize(self.xy[0][index])
             tokenized = tokenized[: self.max_seq_length] if len(tokenized) > self.max_seq_length else tokenized
 
@@ -70,7 +69,7 @@ class TextDataset(data.Dataset):
             padding = [0] * (self.max_seq_length - len(ids))
             ids += padding
             assert len(ids) == self.max_seq_length
-            
+
             ids = torch.tensor(ids)
             labels = torch.from_numpy(np.array(self.xy[1][index]))
             return ids, labels[0]
@@ -156,7 +155,7 @@ def main(
         logger.info("#" * 15)
         logger.info("Epoch {}/{}".format(epoch_index, epochs - 1))
         logger.info("#" * 15)
-        
+
         # Each epoch_index has a training and validation phase
         batch_idx = 0
         for phase in ["train", "val"]:
@@ -179,7 +178,7 @@ def main(
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == "train"):
-                    
+
                     try:
                         outputs = model(inputs)
                         outputs = F.softmax(outputs, dim=1)
@@ -193,16 +192,16 @@ def main(
                     except Exception as e:
                         # logger.warning(f"Ercor mesg: {str(e)}, skipping")
                         loss = None
-                
+
                 # statistics
                 if loss is not None:
                     running_loss += loss.item() * inputs.size(0)
                     sentiment_corrects += torch.sum(torch.max(outputs, 1)[1] == torch.max(sentiment, 1)[1])
-                
+
                 if batch_idx % 500 == 0:
                     logger.info(f"Finished batch index: {batch_idx}")
 
-            # 
+            #
             epoch_loss = float(running_loss) / dataset_sizes[phase]
             sentiment_acc = float(sentiment_corrects) / dataset_sizes[phase]
 
