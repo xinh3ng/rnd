@@ -389,8 +389,8 @@ def main(
     data_folder: str = "{os.environ.get('HOME')}/Google Drive/xheng/data",
     download: bool = False,
     learning_rate: float = 5e-4,
-    batch_size: int = 20,
-    epochs: int = 10,
+    batch_size: int = 50,
+    epochs: int = 2,
     experiment=Experiment(api_key=os.environ.get("API_KEY"), disabled=True),
 ):
 
