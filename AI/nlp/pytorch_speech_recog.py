@@ -129,7 +129,12 @@ class TextTransform:
         self.char_map = {}
         self.index_map = {}
         for line in char_map_str.strip().split("\n"):
-            ch, index = line.split()
+            res = line.split()
+            if res == ["1"]:
+                ch, index = "", "1" 
+            else:
+                ch, index = res[0], res[1]
+
             self.char_map[ch] = int(index)
             self.index_map[int(index)] = ch
         self.index_map[1] = " "
