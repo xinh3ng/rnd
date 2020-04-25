@@ -390,11 +390,12 @@ def main(
     download: bool = False,
     learning_rate: float = 5e-4,
     batch_size: int = 50,
-    epochs: int = 2,
-    experiment=Experiment(api_key=os.environ.get("API_KEY"), disabled=True),
+    epochs: int = 2
 ):
+    # Comet ml experiment
+    experiment = Experiment(api_key=os.environ.get("API_KEY"), project_name = "speech", workspace = "xhengpunchh")
 
-    hparams = {
+    model_params = {
         "n_cnn_layers": 3,
         "n_rnn_layers": 5,
         "rnn_dim": 512,
@@ -406,7 +407,7 @@ def main(
         "batch_size": batch_size,
         "epochs": epochs,
     }
-    experiment.log_parameters(hparams)
+    experiment.log_parameters(model_params)
 
     use_cuda = torch.cuda.is_available()
     torch.manual_seed(7)
@@ -417,38 +418,38 @@ def main(
     train_dataset, test_dataset = download_data(folder=data_folder, download=download)
     train_loader = data.DataLoader(
         dataset=train_dataset,
-        batch_size=hparams["batch_size"],
+        batch_size=model_params["batch_size"],
         shuffle=True,
         collate_fn=lambda x: data_processing(x, text_transform, "train"),
         **kwargs,
     )
     test_loader = data.DataLoader(
         dataset=test_dataset,
-        batch_size=hparams["batch_size"],
+        batch_size=model_params["batch_size"],
         shuffle=False,
         collate_fn=lambda x: data_processing(x, text_transform, "valid"),
         **kwargs,
     )
 
     model = SpeechRecognitionModel(
-        hparams["n_cnn_layers"],
-        hparams["n_rnn_layers"],
-        hparams["rnn_dim"],
-        hparams["n_class"],
-        hparams["n_feats"],
-        hparams["stride"],
-        hparams["dropout"],
+        model_params["n_cnn_layers"],
+        model_params["n_rnn_layers"],
+        model_params["rnn_dim"],
+        model_params["n_class"],
+        model_params["n_feats"],
+        model_params["stride"],
+        model_params["dropout"],
     ).to(device)
     logger.info(model)
     logger.info("No. of Model Parameters: %d" % sum([param.nelement() for param in model.parameters()]))
 
-    optimizer = torch.optim.AdamW(model.parameters(), hparams["learning_rate"])
+    optimizer = torch.optim.AdamW(model.parameters(), model_params["learning_rate"])
     criterion = nn.CTCLoss(blank=28).to(device)
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer,
-        max_lr=hparams["learning_rate"],
+        max_lr=model_params["learning_rate"],
         steps_per_epoch=int(len(train_loader)),
-        epochs=hparams["epochs"],
+        epochs=model_params["epochs"],
         anneal_strategy="linear",
     )
 
