@@ -23,18 +23,18 @@ def download_data(folder: str = "{os.environ.get('HOME')}/Google Drive/xheng/dat
 
 
 def wer(reference, hypothesis, ignore_case=False, delimiter=" "):
-    """Calculate word error rate (WER). WER compares reference text and
-    hypothesis text in word-level. WER is defined as:
+    """Calculate word error rate (WER). WER compares reference text and hypothesis text in word-level.
+    WER is defined as:
     .. math::
         WER = (Sw + Dw + Iw) / Nw
     where
     .. code-block:: text
-        Sw is the number of words subsituted,
+        Sw is the number of words substituted,
         Dw is the number of words deleted,
         Iw is the number of words inserted,
         Nw is the number of words in the reference
-    We can use levenshtein distance to calculate WER. Please draw an attention
-    that empty items will be removed when splitting sentences by delimiter.
+    We can use levenshtein distance to calculate WER. Please draw an attention that empty items will be removed when
+    splitting sentences by delimiter.
     :param reference: The reference sentence.
     :type reference: basestring
     :param hypothesis: The hypothesis sentence.
@@ -56,7 +56,7 @@ def wer(reference, hypothesis, ignore_case=False, delimiter=" "):
     return wer
 
 
-def cer(reference, hypothesis, ignore_case=False, remove_space=False):
+def cer(reference, hypothesis, ignore_case: bool = False, remove_space: bool = False):
     """Calculate charactor error rate (CER). CER compares reference text and
     hypothesis text in char-level. CER is defined as:
     .. math::
@@ -67,24 +67,20 @@ def cer(reference, hypothesis, ignore_case=False, remove_space=False):
         Dc is the number of characters deleted,
         Ic is the number of characters inserted
         Nc is the number of characters in the reference
-    We can use levenshtein distance to calculate CER. Chinese input should be
-    encoded to unicode. Please draw an attention that the leading and tailing
-    space characters will be truncated and multiple consecutive space
+    We can use levenshtein distance to calculate CER. Chinese input should be encoded to unicode. Please draw an
+    attention that the leading and tailing space characters will be truncated and multiple consecutive space
     characters in a sentence will be replaced by one space character.
-    :param reference: The reference sentence.
-    :type reference: basestring
-    :param hypothesis: The hypothesis sentence.
-    :type hypothesis: basestring
-    :param ignore_case: Whether case-sensitive or not.
-    :type ignore_case: bool
-    :param remove_space: Whether remove internal space characters
-    :type remove_space: bool
-    :return: Character error rate.
-    :rtype: float
-    :raises ValueError: If the reference length is zero.
+
+    Args:
+        reference (str) : The reference sentence.
+        hypothesis (str): The hypothesis sentence.
+        ignore_case (bool): Whether case-sensitive or not.
+        remove_space (bool): Whether remove internal space characters
+
+    Returns:
+        Character error rate
     """
     edit_distance, ref_len = char_errors(reference, hypothesis, ignore_case, remove_space)
-
     if ref_len == 0:
         raise ValueError("Length of reference should be greater than 0.")
 
@@ -93,7 +89,7 @@ def cer(reference, hypothesis, ignore_case=False, remove_space=False):
 
 
 class TextTransform:
-    """Maps characters to integers and vice versa"""
+    """A map between characters and integers"""
 
     def __init__(self):
         char_map_str = """
@@ -248,7 +244,7 @@ class BidirectionalGRU(nn.Module):
 class SpeechRecognitionModel(nn.Module):
     """Speech Recognition Model Inspired by DeepSpeech 2"""
 
-    def __init__(self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride=2, dropout=0.1):
+    def __init__(self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride: int = 2, dropout: float = 0.1):
         super(SpeechRecognitionModel, self).__init__()
         n_feats = n_feats // 2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3 // 2)  # cnn for extracting hierarchical features
@@ -302,8 +298,8 @@ def train(model, device, train_loader, criterion, optimizer, scheduler, epoch, i
     model.train()
     data_len = len(train_loader.dataset)
     with experiment.train():
-        for batch_idx, _data in enumerate(train_loader):
-            spectrograms, labels, input_lengths, label_lengths = _data
+        for batch_idx, data in enumerate(train_loader):
+            spectrograms, labels, input_lengths, label_lengths = data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
 
             optimizer.zero_grad()
@@ -321,7 +317,7 @@ def train(model, device, train_loader, criterion, optimizer, scheduler, epoch, i
             optimizer.step()
             scheduler.step()
             iter_meter.step()
-            if batch_idx % 100 == 0 or batch_idx == data_len:
+            if batch_idx % 10 == 0 or batch_idx == data_len:
                 logger.info(
                     "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
                         epoch,
@@ -340,8 +336,8 @@ def test(model, device, test_loader, criterion, iter_meter, experiment, text_tra
     test_cer, test_wer = [], []
     with experiment.test():
         with torch.no_grad():
-            for I, _data in enumerate(test_loader):
-                spectrograms, labels, input_lengths, label_lengths = _data
+            for I, data in enumerate(test_loader):
+                spectrograms, labels, input_lengths, label_lengths = data
                 spectrograms, labels = spectrograms.to(device), labels.to(device)
 
                 output = model(spectrograms)  # (batch, time, n_class)
