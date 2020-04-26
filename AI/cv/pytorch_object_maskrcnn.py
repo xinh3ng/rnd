@@ -141,7 +141,7 @@ def main(root: str, num_classes: int = 2, epochs: int = 10):
     data_loader_test = torch.utils.data.DataLoader(
         dataset_test, batch_size=1, shuffle=False, num_workers=4, collate_fn=utils.collate_fn
     )
-    
+
     ################
     # Set up the model
     ################
