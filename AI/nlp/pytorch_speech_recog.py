@@ -127,7 +127,7 @@ class TextTransform:
         for line in char_map_str.strip().split("\n"):
             res = line.split()
             if res == ["1"]:
-                ch, index = "", "1" 
+                ch, index = "", "1"
             else:
                 ch, index = res[0], res[1]
 
@@ -386,10 +386,10 @@ def main(
     download: bool = False,
     learning_rate: float = 5e-4,
     batch_size: int = 50,
-    epochs: int = 2
+    epochs: int = 2,
 ):
     # Comet ml experiment
-    experiment = Experiment(api_key=os.environ.get("API_KEY"), project_name = "speech", workspace = "xhengpunchh")
+    experiment = Experiment(api_key=os.environ.get("API_KEY"), project_name="speech", workspace="xhengpunchh")
 
     model_params = {
         "n_cnn_layers": 3,
