@@ -164,6 +164,7 @@ def plot_durations(episode_durations: list):
     plt.xlabel("Episode")
     plt.ylabel("Duration")
     plt.plot(durations_t.numpy())
+    print(f"Time durations (longer the better): {durations_t.numpy()}")
 
     # Take 100 episode averages and plot them too
     if len(durations_t) >= 100:
@@ -223,7 +224,7 @@ def optimize_model(policy_net, target_net, memory, optimizer):
     optimizer.step()
 
 
-def main(num_episodes: int = 50):
+def main(num_episodes: int = 100):
 
     env.reset()
 
