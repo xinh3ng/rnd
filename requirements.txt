@@ -1,11 +1,16 @@
 black
+databricks-connect
+flask
 gensim
+gym
 numpy
 pandas
+pyarrow
 pytest
 pytest-cov
+requests
 scikit-learn
 spacy
-torch 
+torch
 torchvision
 transformers
