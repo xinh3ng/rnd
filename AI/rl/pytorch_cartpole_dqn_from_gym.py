@@ -289,15 +289,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", default="CartPole-v0", help="Gym environment name")
-    parser.add_argument("--n_episodes", type=int, default=500)
-    parser.add_argument("--batch_size", type=int, default=64, help="Mini-batch size")
+    parser.add_argument("--n_episodes", type=int, default=1000)
+    parser.add_argument("--batch_size", type=int, default=64, help="batch size of the replace memeory")
     parser.add_argument("--gamma", type=float, default=0.99, help="Discount rate for q_target")
     parser.add_argument("--hidden_dim", type=int, default=12, help="Hidden dimension")
     parser.add_argument("--capacity", type=int, default=50000, help="Replay memory capacity")
     parser.add_argument(
         "--max_episode", type=int, default=100, help="e-Greedy target episode (eps will be the lowest at this episode)"
     )
-    parser.add_argument("--min_eps", type=float, default=0.01, help="Min epsilon")
+    parser.add_argument("--min_eps", type=float, default=0.1, help="Min epsilon")
     args = vars(parser.parse_args())
     print("Cmd line args:\n{}".format(json.dumps(args, sort_keys=True, indent=4)))
 
