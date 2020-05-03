@@ -7,6 +7,8 @@
 *.jp[e]g
 *.png
 *.mp4
+assets/
+monitors/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
