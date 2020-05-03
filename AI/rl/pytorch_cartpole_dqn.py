@@ -14,6 +14,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+import sys
 
 import torch
 import torch.nn as nn
@@ -288,13 +289,14 @@ def main(num_episodes: int = 100):
     env.close()
     plt.ioff()
     plt.show()
+    sys.exit()
 
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_episodes", type=int, default=50)
+    parser.add_argument("--num_episodes", type=int, default=100)
     args = vars(parser.parse_args())
     print("Cmd line args:\n{}".format(json.dumps(args, sort_keys=True, indent=4)))
 
