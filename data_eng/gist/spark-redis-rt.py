@@ -1,8 +1,6 @@
 """
 
 # Links
-https://redislabs.com/blog/getting-started-redis-apache-spark-python/
-
 https://www.infoq.com/articles/data-processing-redis-spark-streaming/
 
 
@@ -10,12 +8,13 @@ https://www.infoq.com/articles/data-processing-redis-spark-streaming/
 import json
 import os
 from pyspark.sql import SparkSession
+from pyspark.sql import types as T, functions as F
 
 
-def main(data_file, key_column: str = "en_curid"):
+def main(data_file: str):
     spark = (
         SparkSession.builder.appName("spark-redis")
-        .master("local[2]")
+        .master("local[*]")
         .config("spark.executor.memory", "2g")
         .config("spark.driver.memory", "2g")
         .config("spark.jars", ",".join(["./assets/spark-redis_2.11-2.4.3-SNAPSHOT-jar-with-dependencies.jar"]))
@@ -28,36 +27,18 @@ def main(data_file, key_column: str = "en_curid"):
     )
     print("spark session's setting: {}".format(str(spark.sparkContext.getConf().getAll())))
 
-    data = spark.read.csv(
-        "{}/data/pantheon.tsv".format(os.environ.get("HOME")), sep="\t", quote="", header=True, inferSchema=True
-    )
-    print(
-        "Showing a small data sample\n%s"
-        % data.select([key_column, "countryCode", "occupation"])
-        .sample(0.1, False)
-        .limit(5)
-        .toPandas()
-        .to_string(line_width=120)
-    )
-
-    ################
-    # Write
-    ################
-    print("Saving the data in Redis")
-    data.write.format("org.apache.spark.sql.redis").mode("overwrite").option("table", "people").option(
-        "key.column", key_column
-    ).save()
-
-    ################
-    # Read
-    ################
-    data = (
-        spark.read.format("org.apache.spark.sql.redis")
-        .option("table", "people")
-        .option("key.column", key_column)
+    clicks = (
+        spark.readStream.format("redis")
+        .option("stream.keys", "clicks")
+        .schema(T.StructType([T.StructField("asset", T.StringType()), T.StructField("cost", T.LongType())]))
         .load()
-    ).select([key_column, "countryCode", "occupation"])
-    data.show(5)
+    )
+    print("clicks: %s" % clicks)
+    # clicks.show()
+
+    by_asset = clicks.groupBy("asset").count()
+    query = by_asset.writeStream.start()
+    query.show()
 
 
 if __name__ == "__main__":

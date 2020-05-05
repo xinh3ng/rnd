@@ -1,3 +1,5 @@
+black
+databricks-connect
 numpy
 scipy
 pandas
