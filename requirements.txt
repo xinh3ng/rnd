@@ -2,6 +2,7 @@ black
 databricks-connect
 flask
 gensim
+gym
 numpy
 pandas
 pyarrow
