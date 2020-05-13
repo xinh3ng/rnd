@@ -1,4 +1,5 @@
 # Document files
+assets/
 *.zip
 *.gz
 *.pdf
