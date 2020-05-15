@@ -1,7 +1,0 @@
-numpy
-scipy
-pandas
-matplotlib
-tqdm
-joblib
-scikit-learn
