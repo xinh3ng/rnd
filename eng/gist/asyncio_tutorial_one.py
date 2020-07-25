@@ -55,10 +55,10 @@ if 3 == 0:
 
 # how to convert a coroutine into a Task and schedule it onto the event loop.
 if 4 == 0:
+
     async def foo():
         await asyncio.sleep(10)
         print("Foo!")
-
 
     async def hello_world():
         task = asyncio.create_task(foo())
@@ -74,6 +74,7 @@ if 4 == 0:
 
 
 if 5 == 0:
+
     def blocking_io():
         # File operations (such as logging) can block the event loop: run them in a thread pool
         with open("/dev/urandom", "rb") as f:
