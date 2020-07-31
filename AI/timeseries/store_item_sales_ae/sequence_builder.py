@@ -144,17 +144,7 @@ def last_year_lag(col):
 
 
 def sequence_builder(
-    data, 
-    n_steps_in, 
-    n_steps_out, 
-    key_column, 
-    x_cols, 
-    y_col, 
-    y_cols, 
-    additional_columns, 
-    diff=False, 
-    lag_fns=[], 
-    step=1
+    data, n_steps_in, n_steps_out, key_column, x_cols, y_col, y_cols, additional_columns, diff=False, lag_fns=[], step=1
 ):
     """Main function
     """
@@ -201,7 +191,7 @@ def sequence_builder(
     s.name = "result"
     sequence_data = sequence_data.drop("result", axis=1).join(s)
     sequence_data["result"] = pd.Series(sequence_data["result"])
-    
+
     if diff:
         sequence_data[
             ["x_sequence", "y_sequence"]
@@ -223,12 +213,12 @@ def sequence_builder(
 
 
 if __name__ == "__main__":
-    
-    # 
+
+    #
     infile = "%s/Google Drive/xheng/data/demand-forecasting/processed_data_test_stdscaler.pkl" % os.environ.get("HOME")
     outfile = "%s/Google Drive/xheng/data/demand-forecasting/sequence_data_stdscaler_test.pkl" % os.environ.get("HOME")
 
-    # 
+    #
     data = reduce_mem_usage(pd.read_pickle(infile))
     sequence_data = sequence_builder(
         data=data,
