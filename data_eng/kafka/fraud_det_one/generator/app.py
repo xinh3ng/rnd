@@ -1,14 +1,13 @@
 """
-# Links
+# generator/app.py
 
 """
-
-import os
+from kafka import KafkaProducer
 import json
+import os
 from random import choices, randint
 from string import ascii_letters, digits
 from time import sleep
-from kafka import KafkaProducer
 
 
 TRANSACTIONS_TOPIC = os.environ.get("TRANSACTIONS_TOPIC")
@@ -31,24 +30,22 @@ def _random_amount() -> float:
 
 
 def create_random_transaction() -> dict:
-    """Create a fake, randomised transaction."""
+    """Create a fake, random transaction."""
     return {
         "source": _random_account_id(),
         "target": _random_account_id(),
         "amount": _random_amount(),
-        # Keep it simple: it's all euros
-        "currency": "EUR",
+        "currency": "EUR",  # Keep it simple: it's euro
     }
 
 
 if __name__ == "__main__":
     producer = KafkaProducer(
         bootstrap_servers=KAFKA_BROKER_URL,
-        # Encode all values as JSON
-        value_serializer=lambda value: json.dumps(value).encode(),
+        value_serializer=lambda value: json.dumps(value).encode(),  # Encode all values as JSON
     )
     while True:
         transaction: dict = create_random_transaction()
         producer.send(TRANSACTIONS_TOPIC, value=transaction)
-        print(transaction)  # DEBUG
+        print(transaction)  # debugging purpose
         sleep(SLEEP_TIME)

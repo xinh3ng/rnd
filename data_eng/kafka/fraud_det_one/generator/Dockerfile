@@ -1,4 +1,5 @@
-FROM python:3.6
+# Docker file for the generator
+FROM python:3.7
 
 WORKDIR /usr/app
 

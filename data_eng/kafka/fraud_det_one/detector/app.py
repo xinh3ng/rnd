@@ -1,5 +1,8 @@
 """
+detector/app.py
+
 # Links
+https://florimond.dev/blog/articles/2018/09/building-a-streaming-fraud-detection-system-with-kafka-and-python/
 
 """
 import json
@@ -28,4 +31,4 @@ if __name__ == "__main__":
         transaction: dict = message.value
         topic = FRAUD_TOPIC if is_suspicious(transaction) else LEGIT_TOPIC
         producer.send(topic, value=transaction)
-        print(topic, transaction)  # DEBUG
+        print(topic, transaction)  # for debugging puproses

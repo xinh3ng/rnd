@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
 
@@ -17,6 +17,7 @@ services:
       LEGIT_TOPIC: streaming.transactions.legit
       FRAUD_TOPIC: streaming.transactions.fraud
 
+# Give this composition access to the Kafka network: kafka-network
 networks:
   default:
     external:
