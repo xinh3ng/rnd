@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+
 // BinarySearch
 func BinarySearch(array []int, target int, method string) int {
 
@@ -38,11 +39,18 @@ func binarySearchHelper(array []int, target int, lowIndex int, highIndex int) in
 // IterBinarySearchHelper uses iteration (a while loop)
 func iterBinarySearch(array []int, target int) int {
 
-	// startIndex, endIndex := 0, len(array)-1
-	// var mid int
+	startIndex, endIndex := 0, len(array)-1
+	var mid int
 
 	for true {
-		break
+		mid = (startIndex + endIndex) / 2
+		if array[mid] > target { // target should be in the lower half
+			endIndex = mid
+		} else if array[mid] < target {
+			startIndex = mid
+		} else {
+			return mid
+		}
 	}
 	return -1
 }
@@ -53,15 +61,13 @@ func main() {
 	arr := []int{0, 1, 2, 3, 4, 5}
 
 	var idx int
-	for var element int in {1, 2} {
+	for element := 1; element <= 2; element++ {
 		idx = BinarySearch(arr, element, "recursion")
 		fmt.Println(fmt.Sprintf("Using recusion method.  Index of element %d is %d", element, idx))
 
 		idx = BinarySearch(arr, element, "iteration")
-		fmt.Println(fmt.Sprintf("Using iteration method. Index of element %d is %d", element, idx))
-
+		fmt.Println(fmt.Sprintf("Using iteration method. Index of element %d is %d\n", element, idx))
 	}
 
-
-	fmt.Println("\nALL DONE!")
+	fmt.Println("\nALL DONE!\n")
 }
