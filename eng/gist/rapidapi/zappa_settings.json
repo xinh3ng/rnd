@@ -1,0 +1,9 @@
+{
+    "dev": {
+        "app_function": "app.app",
+        "profile_name": "default",
+        "project_name": "rapidapi",
+        "runtime": "python3.7",
+        "s3_bucket": "zappa-ilzl14ic5"
+    }
+}
