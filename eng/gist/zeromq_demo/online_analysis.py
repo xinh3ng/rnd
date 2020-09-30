@@ -8,7 +8,7 @@ import zmq
 import struct
 
 
-topic = "fancyhw_data".encode('ascii')
+topic = "fancyhw_data".encode("ascii")
 
 print("Reading messages with topic: {}".format(topic))
 
@@ -22,8 +22,8 @@ with zmq.Context() as context:
     idx = 0
     try:
         while True:
-            binary_topic, data_buffer = socket.recv().split(b' ', 1)
-            topic = binary_topic.decode(encoding = 'ascii')
+            binary_topic, data_buffer = socket.recv().split(b" ", 1)
+            topic = binary_topic.decode(encoding="ascii")
 
             print("Message {:d}:".format(idx))
             print("\ttopic: '{}'".format(topic))
