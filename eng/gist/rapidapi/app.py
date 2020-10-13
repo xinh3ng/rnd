@@ -61,7 +61,7 @@ def upload_file():
     print("filename: %s" % filepath)
     # if provided_data is None:
     #    return "Please enter valid file name", 400
-    
+
     print("File location: %s" % os.path.dirname(os.path.abspath(__file__)))
     print("Working directory: %s" % os.path.abspath(os.getcwd()))
 
