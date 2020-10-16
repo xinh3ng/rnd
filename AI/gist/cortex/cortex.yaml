@@ -1,0 +1,6 @@
+
+- name: text-generator
+  kind: RealtimeAPI
+  predictor:
+    type: python
+    path: predictor.py
