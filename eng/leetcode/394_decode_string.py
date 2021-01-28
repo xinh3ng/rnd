@@ -42,7 +42,7 @@ class SolutionOne(object):
 
 class Solution(object):
     """
-    Keep translating the left most [ and its enclosure. During the process, I need to 
+    Keep translating the left most [ and its enclosure. During the process, I need to
     - identify location of the pairing ]
     - identify the proceeeding digits
     """
@@ -67,8 +67,7 @@ class Solution(object):
         return text
 
     def locate_right_bracket(self, text, start_pos=0):
-        """
-        """
+        """"""
         cnt_left_bracket = 0
         for pos, ch in enumerate(text):
             if pos < start_pos:  # Skip if pos is less than the starting position

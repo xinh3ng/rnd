@@ -23,9 +23,7 @@ logger = create_logger(__name__)
 
 
 def get_image_model(cnn_weights_file):
-    """Read the CNN weights file return the VGG model update with the weights.
-    
-    """
+    """Read the CNN weights file return the VGG model update with the weights."""
     image_model = VGG_16(cnn_weights_file)
 
     # this is standard VGG 16 without the last two layers
@@ -36,9 +34,7 @@ def get_image_model(cnn_weights_file):
 
 
 def get_image_features(image_file, cnn_weights_file):
-    """Run the image_file to VGG 16 model and return the weights (filters) as (1, 4096) vector
-    
-    """
+    """Run the image_file to VGG 16 model and return the weights (filters) as (1, 4096) vector"""
     # Magic_Number = 4096  > Comes from last layer of VGG Model
     image_features = np.zeros((1, 4096))
 
@@ -58,7 +54,7 @@ def get_question_features(question):
     """For a given question, a unicode string, returns the time series vector
     with each word (token) transformed into a (300,)  representation
     calculated using Glove Vector
-    
+
     """
     # Usea the given glove model
     word_embeddings = spacy.load("en", vectors="en_glove_cc_300_1m_vectors")

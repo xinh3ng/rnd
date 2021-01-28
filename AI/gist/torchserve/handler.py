@@ -41,35 +41,32 @@ class MNISTDigitClassifier(object):
             raise RuntimeError("Missing the model definition file")
 
         from model import Net
+
         state_dict = torch.load(model_pt_path, map_location=self.device)
         self.model = Net()
         self.model.load_state_dict(state_dict)
         self.model.to(self.device)
         self.model.eval()
 
-        logger.debug('Model file {0} loaded successfully'.format(model_pt_path))
+        logger.debug("Model file {0} loaded successfully".format(model_pt_path))
         self.initialized = True
 
     def preprocess(self, data):
         """
-         Scales, crops, and normalizes a PIL image for a MNIST model,
-         returns an Numpy array
+        Scales, crops, and normalizes a PIL image for a MNIST model,
+        returns an Numpy array
         """
         image = data[0].get("data")
         if image is None:
             image = data[0].get("body")
 
-        mnist_transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,))
-        ])
+        mnist_transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
         image = Image.open(io.BytesIO(image))
         image = mnist_transform(image)
         return image
 
     def inference(self, img, topk=5):
-        ''' Predict the class (or classes) of an image using a trained deep learning model.
-        '''
+        """Predict the class (or classes) of an image using a trained deep learning model."""
         # Convert 2D image to 1D vector
         img = np.expand_dims(img, 0)
         img = torch.from_numpy(img)

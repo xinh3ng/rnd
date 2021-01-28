@@ -84,8 +84,7 @@ def get_device_status(access_token):
 
 
 def get_data_stream(access_token, access_token="https://developer-api.nest.com"):
-    """ Start REST streaming device events given a Nest access_token.
-    """
+    """Start REST streaming device events given a Nest access_token."""
     headers = {"Authorization": "Bearer {0}".format(access_token), "Accept": "text/event-stream"}
     response = requests.get(access_token, headers=headers, stream=True)
     client = sseclient.SSEClient(response)

@@ -38,8 +38,7 @@ def impute_nan(x, lookback=1):
 
 
 def get_train_validate_data(tickers, data_dir, train_size=0.9, head_or_tail="tail"):
-    """Load the entire raw data set and process it. End result will include all candidate features
-    """
+    """Load the entire raw data set and process it. End result will include all candidate features"""
 
     full_data = pd.DataFrame()
     for ticker in tickers:
@@ -94,9 +93,7 @@ def get_raw_test_data(data_dir, ticker, ts_format="%Y-%m-%d"):
 
 
 def process_raw_data(data):
-    """Process raw train or test data
-
-    """
+    """Process raw train or test data"""
     # Take a log()
     for col in ["Open", "High", "Low", "Close", "Volume"]:
         data[col] = impute_nan(data[col], lookback=1)
@@ -105,8 +102,7 @@ def process_raw_data(data):
 
 
 def gen_final_class_labels(data):
-    """Generate final class labels
-    """
+    """Generate final class labels"""
 
     data["Volatility"] = data["volatility"].apply(VolatilityStrToNum().num2str)
     data["Trend"] = data["trend"].apply(TrendStrToNum().num2str)

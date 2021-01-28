@@ -30,9 +30,9 @@ def pop(model):
 
 
 def load_model_legacy(model, weight_path, mode="r"):
-    """The weights in this model were trained with legacy keras. 
-    New keras does not support loading these weights 
-    
+    """The weights in this model were trained with legacy keras.
+    New keras does not support loading these weights
+
     """
     f = h5py.File(weight_path, mode=mode)
     flattened_layers = model.layers

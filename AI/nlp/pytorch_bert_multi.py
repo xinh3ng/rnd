@@ -57,8 +57,7 @@ class TextDataset(data.Dataset):
         self.max_seq_length = max_seq_length
 
     def __getitem__(self, index):
-        """Return the tensors for the review and positive/negative labels
-        """
+        """Return the tensors for the review and positive/negative labels"""
 
         try:
             tokenized = self.tokenizer.tokenize(self.xy[0][index])

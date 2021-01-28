@@ -58,8 +58,7 @@ def load_model_data(dir):
 
 
 def gen_fn_model(embedding_matrix, optimizer="rmsprop", loss="binary_crossentropy", metrics=["acc"]):
-    """Generate a forward net model
-    """
+    """Generate a forward net model"""
     model = Sequential()
     model.add(Embedding(max_words, embedding_dim, input_length=maxlen))
     model.add(Flatten())
