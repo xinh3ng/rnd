@@ -18,8 +18,7 @@ from typing import List
 
 
 class SolutionOne:
-    """
-    """
+    """"""
 
     def longestPalindrome(self, s: str) -> str:
         if not s:

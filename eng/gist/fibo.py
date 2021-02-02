@@ -24,8 +24,7 @@ def fibo_memo(n):
     assert n >= 1
 
     def helper(n):
-        """helper function is the real fibonacci logic
-        """
+        """helper function is the real fibonacci logic"""
         if n in memory_map:
             return memory_map[n]
 

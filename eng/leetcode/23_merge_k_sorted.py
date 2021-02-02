@@ -33,9 +33,7 @@ class ListNode:
 
 
 def genListNode(arr):
-    """Generate a ListNode instance from back to front
-
-    """
+    """Generate a ListNode instance from back to front"""
     idv_nodes = []
     for v in arr:
         idv_nodes.append(ListNode(v, None))  # There is no true "next" yet

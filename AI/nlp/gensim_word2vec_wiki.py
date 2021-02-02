@@ -18,8 +18,7 @@ logger = create_logger(__name__, level="info")
 
 
 def process_wiki(raw_file="enwiki-latest-pages-articles.xml.bz2", processed_file="wiki.en.text"):
-    """Process all wikipedia articles
-    """
+    """Process all wikipedia articles"""
     cnt = 0
     output = open(processed_file, "w")
     wiki = WikiCorpus(raw_file, lemmatize=False, dictionary={})

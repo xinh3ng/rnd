@@ -41,7 +41,7 @@ parent_folder = ""  # users or channel or empty
 
 def get_soup(url):
     """open url and return BeautifulSoup object,
-       or None if site does not exist"""
+    or None if site does not exist"""
 
     result = requests.get(url)
     if result.status_code != 200:
@@ -52,9 +52,9 @@ def get_soup(url):
 
 def channel_section_links(channel_name):
     """list of
-       { "title": <section title>,
-         "link": <url to section play lists>
-       }"""
+    { "title": <section title>,
+      "link": <url to section play lists>
+    }"""
 
     global parent_folder
 
@@ -235,7 +235,7 @@ def html_out(channel, sections):
 
 
 def csv_out(channel, sections):
-    """ create and output channel_name.csv
+    """create and output channel_name.csv
     file for import into a spreadsheet or DB"""
     headers = (
         "channel,section,playlist,video," "link,time,views,publication date," "likes,dislikes,description"

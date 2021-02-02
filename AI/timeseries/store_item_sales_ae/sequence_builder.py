@@ -146,8 +146,7 @@ def last_year_lag(col):
 def sequence_builder(
     data, n_steps_in, n_steps_out, key_column, x_cols, y_col, y_cols, additional_columns, diff=False, lag_fns=[], step=1
 ):
-    """Main function
-    """
+    """Main function"""
     if diff:
         # multiple y_cols not supported yet
         sequence_fn = partial(

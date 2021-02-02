@@ -22,16 +22,13 @@ logger = create_logger(__name__, level="info")
 
 
 def huber_loss(realized, prediction):
-    """Huber loss: sqrt(1+error^2)-1
-    
-    """
+    """Huber loss: sqrt(1+error^2)-1"""
     error = prediction - realized
     return K.mean(K.sqrt(1 + K.square(error)) - 1, axis=-1)
 
 
 class DQNAgent(object):
-    """Deep Q-learning Agent
-    """
+    """Deep Q-learning Agent"""
 
     def __init__(self, state_size, action_size):
         self.state_size = state_size
@@ -47,8 +44,7 @@ class DQNAgent(object):
         self.update_target_model()
 
     def _build_model(self):
-        """Neural net for deep Q learning
-        """
+        """Neural net for deep Q learning"""
         model = Sequential()
         # 'Dense' is the basic form of a neural network layer
         # Input Layer of state is state_size and Hidden Layer with 24 nodes
@@ -84,8 +80,7 @@ class DQNAgent(object):
         return np.argmax(act_values[0])  # Pick the action based on the highest reward (predicted)
 
     def replay(self, batch_size):
-        """Experience replay
-        """
+        """Experience replay"""
         minibatch = random.sample(self.memory, batch_size)
         # Extract informations from each memory
         for state, action, reward, next_state, done in minibatch:

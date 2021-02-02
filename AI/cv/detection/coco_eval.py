@@ -81,7 +81,12 @@ class CocoEvaluator(object):
 
             coco_results.extend(
                 [
-                    {"image_id": original_id, "category_id": labels[k], "bbox": box, "score": scores[k],}
+                    {
+                        "image_id": original_id,
+                        "category_id": labels[k],
+                        "bbox": box,
+                        "score": scores[k],
+                    }
                     for k, box in enumerate(boxes)
                 ]
             )
@@ -110,7 +115,12 @@ class CocoEvaluator(object):
 
             coco_results.extend(
                 [
-                    {"image_id": original_id, "category_id": labels[k], "segmentation": rle, "score": scores[k],}
+                    {
+                        "image_id": original_id,
+                        "category_id": labels[k],
+                        "segmentation": rle,
+                        "score": scores[k],
+                    }
                     for k, rle in enumerate(rles)
                 ]
             )
@@ -131,7 +141,12 @@ class CocoEvaluator(object):
 
             coco_results.extend(
                 [
-                    {"image_id": original_id, "category_id": labels[k], "keypoints": keypoint, "score": scores[k],}
+                    {
+                        "image_id": original_id,
+                        "category_id": labels[k],
+                        "keypoints": keypoint,
+                        "score": scores[k],
+                    }
                     for k, keypoint in enumerate(keypoints)
                 ]
             )

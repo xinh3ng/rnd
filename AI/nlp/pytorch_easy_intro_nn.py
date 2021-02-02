@@ -28,8 +28,7 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(64, 10)
 
     def forward(self, x):
-        """Set up the model by stacking all the layers together
-        """
+        """Set up the model by stacking all the layers together"""
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = self.max_pool(x)

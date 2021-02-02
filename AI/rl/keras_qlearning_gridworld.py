@@ -19,8 +19,7 @@ def rand_pair(start, end):
 
 
 def find_loc(state, obj):
-    """finds an array in the "depth" dimension of the grid
-    """
+    """finds an array in the "depth" dimension of the grid"""
     for i in range(0, 4):
         for j in range(0, 4):
             if (state[i, j] == obj).all():
@@ -28,8 +27,7 @@ def find_loc(state, obj):
 
 
 def get_loc(state, level):
-    """Get location from a given object
-    """
+    """Get location from a given object"""
     for i in range(0, 4):
         for j in range(0, 4):
             if state[i, j][level] == 1:
@@ -37,9 +35,7 @@ def get_loc(state, level):
 
 
 def init_grid():
-    """Initialize stationary grid, all items are placed deterministically
-
-    """
+    """Initialize stationary grid, all items are placed deterministically"""
     state = np.zeros((4, 4, 4))  # 4 x 4 is the grid. Last dimention of 4 is for the 4 objects
     # player
     state[0, 1] = np.array([0, 0, 0, 1])  # 3
@@ -53,8 +49,7 @@ def init_grid():
 
 
 def init_grid_player():
-    """Initialize player in random location, but keep wall, goal and pit stationary
-    """
+    """Initialize player in random location, but keep wall, goal and pit stationary"""
     state = np.zeros((4, 4, 4))
     # place player
     state[rand_pair(0, 4)] = np.array([0, 0, 0, 1])
@@ -76,9 +71,7 @@ def init_grid_player():
 
 
 def init_grid_rand():
-    """Initialize grid, so that goal, pit, wall, player are all randomly placed
-
-    """
+    """Initialize grid, so that goal, pit, wall, player are all randomly placed"""
     state = np.zeros((4, 4, 4))
     # place player
     state[rand_pair(0, 4)] = np.array([0, 0, 0, 1])
@@ -131,8 +124,7 @@ def make_move(state, action):
 
 
 def get_reward(state):
-    """Calculate reward
-    """
+    """Calculate reward"""
     player_loc = get_loc(state, 3)
     pit = get_loc(state, 1)
     goal = get_loc(state, 0)
@@ -194,8 +186,7 @@ def fit_model(model, state, y):
 
 
 def predict_model(model, state):
-    """Predict q-value for 4 possible actions
-    """
+    """Predict q-value for 4 possible actions"""
     return model.predict(state.reshape(1, 64), batch_size=1)
 
 
