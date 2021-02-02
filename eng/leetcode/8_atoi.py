@@ -1,3 +1,11 @@
+"""
+
+https://leetcode.com/problems/string-to-integer-atoi/
+
+- It is considered medium on Leetcode
+- the integer range is from -2147483648 to 2147483647 
+"""
+
 class SolutionOne:
     """"""
 
@@ -27,6 +35,11 @@ class SolutionOne:
                 break
 
         result = -1 * result if is_negative else result
+        
+        # Deal with overflow problem
+        # NB xheng: I don't like this approach. What if result's data type cannot hold anything beyong int32. This approach would cause an overflow.
+        result = max(-2147483648, result)
+        result = min(2147483647, result)
         return result
 
 
