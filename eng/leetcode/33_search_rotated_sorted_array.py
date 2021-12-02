@@ -33,7 +33,7 @@ class SolutionOne:
                 return piv + res
         else:  # In the 2nd half
             return self.binary_search(nums[:piv], target=target)
-        
+
         return -1
 
     def search_pivot(self, nums: List[int]):
