@@ -46,8 +46,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--data_file",
-        default=f"",
+        "--data_file", default=f"",
     )
 
     # Parse the cmd line args

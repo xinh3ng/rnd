@@ -66,7 +66,7 @@ def get_question_features(question):
 
 
 def get_vqa_model(vqa_model_file, vqa_weights_file):
-    """ Given the VQA model and its weights, compiles and returns the model """
+    """Given the VQA model and its weights, compiles and returns the model"""
 
     # thanks the keras function for loading a model from JSON, this becomes
     # very easy to understand and work. Alternative would be to load model

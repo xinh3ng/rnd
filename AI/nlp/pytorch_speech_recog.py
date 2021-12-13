@@ -136,7 +136,7 @@ class TextTransform:
         self.index_map[1] = " "
 
     def text_to_int(self, text):
-        """ Use a character map and convert text to an integer sequence """
+        """Use a character map and convert text to an integer sequence"""
         int_sequence = []
         for c in text:
             if c == " ":
@@ -147,7 +147,7 @@ class TextTransform:
         return int_sequence
 
     def int_to_text(self, labels):
-        """ Use a character map and convert integer labels to an text sequence """
+        """Use a character map and convert integer labels to an text sequence"""
         string = []
         for i in labels:
             string.append(self.index_map[i])
