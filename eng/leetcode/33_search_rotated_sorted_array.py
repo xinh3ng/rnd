@@ -74,11 +74,31 @@ Solution = SolutionOne
 
 examples = {
     6: {"nums": [1, 2, 3, 4, 5, 6], "target": 4, "output": 3},
-    4: {"nums": [4, 5, 6, 7, 0, 1, 2], "target": 3, "output": -1,},
-    1: {"nums": [4, 5, 6, 7, 0, 1, 2, 3], "target": 0, "output": 4,},
-    2: {"nums": [4, 5, 6, 7, 0, 1, 2, 3], "target": 2, "output": 6,},
-    3: {"nums": [4, 5, 6, 7, 0, 1, 2, 3], "target": 6, "output": 2,},
-    5: {"nums": [1], "target": 0, "output": -1,},
+    4: {
+        "nums": [4, 5, 6, 7, 0, 1, 2],
+        "target": 3,
+        "output": -1,
+    },
+    1: {
+        "nums": [4, 5, 6, 7, 0, 1, 2, 3],
+        "target": 0,
+        "output": 4,
+    },
+    2: {
+        "nums": [4, 5, 6, 7, 0, 1, 2, 3],
+        "target": 2,
+        "output": 6,
+    },
+    3: {
+        "nums": [4, 5, 6, 7, 0, 1, 2, 3],
+        "target": 6,
+        "output": 2,
+    },
+    5: {
+        "nums": [1],
+        "target": 0,
+        "output": -1,
+    },
 }
 
 for idx, example in examples.items():

@@ -22,10 +22,13 @@ def is_suspicious(transaction: dict, thresh: int = 900) -> bool:
 
 if __name__ == "__main__":
     consumer = KafkaConsumer(
-        TRANSACTIONS_TOPIC, bootstrap_servers=KAFKA_BROKER_URL, value_deserializer=lambda value: json.loads(value),
+        TRANSACTIONS_TOPIC,
+        bootstrap_servers=KAFKA_BROKER_URL,
+        value_deserializer=lambda value: json.loads(value),
     )
     producer = KafkaProducer(
-        bootstrap_servers=KAFKA_BROKER_URL, value_serializer=lambda value: json.dumps(value).encode(),
+        bootstrap_servers=KAFKA_BROKER_URL,
+        value_serializer=lambda value: json.dumps(value).encode(),
     )
     for message in consumer:
         transaction: dict = message.value

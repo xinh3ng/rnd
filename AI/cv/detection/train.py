@@ -181,10 +181,16 @@ if __name__ == "__main__":
     parser.add_argument("--start_epoch", default=0, type=int, help="start epoch")
     parser.add_argument("--aspect-ratio-group-factor", default=3, type=int)
     parser.add_argument(
-        "--test-only", dest="test_only", help="Only test the model", action="store_true",
+        "--test-only",
+        dest="test_only",
+        help="Only test the model",
+        action="store_true",
     )
     parser.add_argument(
-        "--pretrained", dest="pretrained", help="Use pre-trained models from the modelzoo", action="store_true",
+        "--pretrained",
+        dest="pretrained",
+        help="Use pre-trained models from the modelzoo",
+        action="store_true",
     )
 
     # distributed training parameters
