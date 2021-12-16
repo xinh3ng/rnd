@@ -32,21 +32,20 @@ def main():
         id = inputs["input_ids"][0][i]
         print("%6d %s" % (id, tokenizer.decode(id)))
 
-    print("\nComputing all possible outputs")
-    blank_id = tokenizer.mask_token_id  # ID of {blank} = 103
-    blank_id_idx = torch.where(inputs["input_ids"] == blank_id)[1]  # [6]
-
+    print("\nPredicting all possible outputs")
     ids = inputs["input_ids"]
     mask = inputs["attention_mask"]
     with torch.no_grad():
         output = model(ids, mask)
     print(f"output: {output}")
 
-    #
+    # Output the predictions
+    blank_id = tokenizer.mask_token_id  # ID of {blank} = 103
+    blank_id_idx = torch.where(inputs["input_ids"] == blank_id)[1]  # [6]
     all_logits = output.logits  # [1, 10, 28996]
     pred_logits = all_logits[0, blank_id_idx, :]  # [1, 28996]
     top_ids = torch.topk(pred_logits, 5, dim=1).indices[0].tolist()
-    print("The top 5 predictions (id and words):")
+    print("\nThe top 5 predictions (id - word):")
     for id in top_ids:
         print(f"id: {id} - word: {tokenizer.decode([id])}")
 
