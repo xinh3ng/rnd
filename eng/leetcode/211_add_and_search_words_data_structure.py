@@ -54,7 +54,6 @@ class WordDictionary:
         print(self.map)
 
     def search(self, word: str) -> bool:
-
         candidates = None
         for i, x in enumerate(word):
             if x == ".":

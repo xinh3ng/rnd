@@ -92,7 +92,6 @@ class BertForSequenceClassification(nn.Module):
         nn.init.xavier_normal_(self.classifier.weight)
 
     def forward(self, input_ids, token_type_ids: list = None, attention_mask=None, labels=None):
-
         _, pooled_output = self.bert(input_ids, token_type_ids, attention_mask)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
@@ -177,7 +176,6 @@ def main(
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == "train"):
-
                     try:
                         outputs = model(inputs)
                         outputs = F.softmax(outputs, dim=1)

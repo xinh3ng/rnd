@@ -82,7 +82,7 @@ if 5 == 0:
 
     def cpu_bound():
         # CPU-bound operations will block the event loop: in general it is preferable to run them in a process pool
-        return sum(i * i for i in range(3 * 10 ** 7))
+        return sum(i * i for i in range(3 * 10**7))
 
     async def main():
         loop = asyncio.get_running_loop()

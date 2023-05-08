@@ -20,7 +20,6 @@ logger = create_logger(__name__)
 
 class DCGAN(object):
     def __init__(self, img_rows, img_cols, channel):
-
         self.img_rows = img_rows
         self.img_cols = img_cols
         self.channel = channel

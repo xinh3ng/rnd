@@ -11,7 +11,6 @@ class SolutionOne:
     """"""
 
     def myAtoi(self, s: str) -> bool:
-
         leading_spaces_processed = False
         is_negative = False
         result = 0

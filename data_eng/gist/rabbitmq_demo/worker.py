@@ -22,7 +22,6 @@ def callback(ch, method, properties, body):
 
 
 def main(queue_name: str = "hello"):
-
     connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
     channel = connection.channel()
 
@@ -37,7 +36,6 @@ def main(queue_name: str = "hello"):
 
 
 if __name__ == "__main__":
-
     # Keep the receiver up until a keybound interruption
     try:
         main()

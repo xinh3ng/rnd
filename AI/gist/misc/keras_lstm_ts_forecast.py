@@ -115,7 +115,6 @@ def plot_data(
 
 
 def make_forecast(model: Sequential, look_back_buffer: numpy.ndarray, timesteps: int = 1, batch_size: int = 1):
-
     forecast_predict = numpy.empty((0, 1), dtype=numpy.float32)
     for _ in trange(timesteps, desc="predicting data\t", mininterval=1.0):
         # make prediction with current lookback buffer

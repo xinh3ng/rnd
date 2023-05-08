@@ -107,7 +107,6 @@ class ImageDiffAlgo(object):
 
 
 class OpencvOemAlgo(object):
-
     tracker_init_fns = {"MIL": cv2.TrackerMIL_create}
 
     def __init__(self, video, image_width, tracking_algo_name="MIL"):

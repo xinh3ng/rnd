@@ -68,7 +68,6 @@ def main(
     save_model: bool,
     seed: int,
 ):
-
     torch.manual_seed(seed)
 
     use_cuda = not no_cuda and torch.cuda.is_available()

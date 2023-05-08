@@ -35,7 +35,6 @@ There aren't any consecutive pairs of 1's in the binary representation of 8, so 
 
 class Solution:
     def binaryGap(self, N: int) -> int:
-
         # Converting to a binary number to go though 1 by 1
         gaps = []
         start, end = None, None
@@ -64,7 +63,6 @@ inputs = [22, 8, 5, 6]
 
 
 for idx, N in enumerate(inputs):
-
     print("####################\nExample %s: %s" % (idx, str(N)))
     res = Solution().binaryGap(N)
     print(f"Result = {res}\n")
