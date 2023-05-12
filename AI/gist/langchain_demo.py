@@ -1,15 +1,20 @@
 """
 
-# 
+# Usage
+export OPENAI_API_KEY=
+python ai/gist/langchain_demo.py 
+
 """
-import json
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-from langchain.document_loaders import TextLoader
-import os
-import pandas as pd
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
+checkpoint = "bigcode/starcoder"
+device = "cpu" # for GPU usage or "cpu" for CPU usage
 
-loader = TextLoader("../state_of_the_union.txt", encoding="utf8")
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+model = AutoModelForCausalLM.from_pretrained(checkpoint, trust_remote_code=True).to(device)
 
-print("ALL DONE!\n")
+inputs = tokenizer.encode("def print_hello_world():", return_tensors="pt").to(device)
+outputs = model.generate(inputs)
+
+print(tokenizer.decode(outputs[0]))
+
