@@ -1,6 +1,5 @@
 arviz
 black
-databricks-connect
 flask
 gensim
 gym

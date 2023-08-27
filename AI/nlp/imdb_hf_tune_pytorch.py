@@ -87,7 +87,7 @@ def main(proj_root_dir, epochs: int = 3):
     optim = AdamW(model.parameters(), lr=5.0e-5)  # weight decay
     for epoch in range(epochs):
         epoch_loss = 0.0
-        for (batch_idx, batch) in enumerate(train_loader):
+        for batch_idx, batch in enumerate(train_loader):
             optim.zero_grad()
 
             input_ids = batch["input_ids"]  # tensor
@@ -115,6 +115,5 @@ def main(proj_root_dir, epochs: int = 3):
 
 
 if __name__ == "__main__":
-
     proj_root_dir = f"{os.getenv('HOME')}/dev/github/xinh3ng/data/aclImdb"
     main(proj_root_dir)

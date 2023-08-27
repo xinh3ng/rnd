@@ -226,7 +226,6 @@ def optimize_model(policy_net, target_net, memory, optimizer):
 
 
 def main(num_episodes: int = 100):
-
     env.reset()
 
     # Get screen size so that we can initialize layers correctly based on shape

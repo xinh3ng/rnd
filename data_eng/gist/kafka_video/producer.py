@@ -18,7 +18,6 @@ logger = create_logger(__name__, level="info")
 
 
 def video_emitter(video_file, topic, producer_port=9092):
-
     # Open the video
     assert os.path.isfile(video_file), "Video does not exist"
 

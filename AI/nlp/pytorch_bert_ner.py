@@ -147,7 +147,6 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
     epochs_trained = 0
     steps_trained_in_current_epoch = 0
     if os.path.exists(args.model_name_or_path):  # Check if continuing training from a checkpoint
-
         # set global_step to gobal_step of last saved checkpoint from model path
         global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
         epochs_trained = global_step // (len(train_dataloader) // args.gradient_accumulation_steps)
@@ -249,7 +248,6 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
 
 
 def evaluate(args, model, tokenizer, labels, pad_token_label_id, mode, prefix=""):
-
     eval_dataset = load_and_cache_examples(args, tokenizer, labels, pad_token_label_id, mode=mode)
 
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
@@ -376,7 +374,6 @@ def load_and_cache_examples(args, tokenizer, labels, pad_token_label_id, mode):
 
 
 def main(args):
-
     if (
         os.path.exists(args.output_dir)
         and os.listdir(args.output_dir)

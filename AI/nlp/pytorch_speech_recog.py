@@ -155,7 +155,6 @@ class TextTransform:
 
 
 def data_processing(data, text_transform, train_or_test: str = "train"):
-
     # Set up the audio transforms for train and validation sets
     train_audio_transforms = nn.Sequential(
         torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
@@ -165,7 +164,7 @@ def data_processing(data, text_transform, train_or_test: str = "train"):
     valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
 
     spectrograms, labels, input_lengths, label_lengths = [], [], [], []
-    for (waveform, _, utterance, _, _, _) in data:
+    for waveform, _, utterance, _, _, _ in data:
         if train_or_test == "train":
             spec = train_audio_transforms(waveform).squeeze(0).transpose(0, 1)
         elif train_or_test == "valid":

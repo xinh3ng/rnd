@@ -141,7 +141,6 @@ def main(
     epochs: int = 20,
     learning_rate=0.01,
 ):
-
     train_set, test_set = load_dataset(data_file=data_file, subsample_pct=0.5)
     constraint_mask = create_constraint_mask()
 

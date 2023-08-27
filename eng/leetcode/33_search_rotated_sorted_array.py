@@ -12,7 +12,6 @@ from typing import List
 
 class SolutionOne:
     def search(self, nums: List[int], target: int) -> int:
-
         n = len(nums)
         piv = self.search_pivot(nums)
 

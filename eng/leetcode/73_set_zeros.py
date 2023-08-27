@@ -79,7 +79,6 @@ inputs.append([[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]])
 
 
 for idx, input in enumerate(inputs):
-
     matrix = deepcopy(input)
 
     print("####################\nExample %d:\n%s" % (idx, matrix_str(matrix)))

@@ -64,7 +64,6 @@ class LR(object):
 
 
 def backtest_model(train_data, estimator, train_size, n_ahead, verbose=0):
-
     ts_splitter = TimeSeriesSplitter(train_size=train_size, n_ahead=n_ahead)
     perf_df = ts_cross_validate(train_data, estimator, ts_splitter, perf_score_fn=gen_perf_scores, verbose=1)
 
@@ -74,7 +73,6 @@ def backtest_model(train_data, estimator, train_size, n_ahead, verbose=0):
 
 
 def main(data_dir, train_size=100, n_ahead=2):
-
     train_data = get_train_data(data_dir=data_dir)
     train_data = train_data[train_data["Stock"] == 942].reset_index(drop=True)
 
