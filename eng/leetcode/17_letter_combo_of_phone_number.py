@@ -8,6 +8,7 @@ Constraints:
 digits[i] is a digit in the range ['2', '9'].
 
 """
+
 from typing import List
 
 
@@ -24,7 +25,19 @@ class Solution:
     }
 
     def letterCombinations(self, digits: str) -> List[str]:
-        return
+        if digits is None or len(digits) == 0:
+            return []
+
+        def backtrack(combination, next_digits):
+            if len(next_digits) >= 1:
+                for letter in self.digits_to_letters[next_digits[0]]:
+                    backtrack(combination + letter, next_digits[1:])
+            else:
+                output.append(combination)
+
+        output = []
+        backtrack("", digits)
+        return output
 
 
 ######################################################################################
@@ -38,10 +51,10 @@ inputs = {
 
 solution = Solution()
 for digits, out in inputs.items():
-    print("####################")
+    
 
     assert "1" not in digits, f"digits: {digits} containt '1'"
     assert len(digits) <= 4
 
     out = solution.letterCombinations(digits)
-    print(f"digits: {digits}, out: {out}")
+    print(f"digits: {digits}, out: {out}\n")
