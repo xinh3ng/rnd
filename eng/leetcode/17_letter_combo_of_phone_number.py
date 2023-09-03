@@ -51,8 +51,6 @@ inputs = {
 
 solution = Solution()
 for digits, out in inputs.items():
-    
-
     assert "1" not in digits, f"digits: {digits} containt '1'"
     assert len(digits) <= 4
 
