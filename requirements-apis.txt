@@ -1,0 +1,19 @@
+# pandas<2.0.0, because ...
+# s
+################################################################################
+boto3
+fastapi[all]
+fastapi-pagination
+frozendict
+google-api-python-client 
+google-auth-httplib2
+google-auth-oauthlib
+gunicorn
+httpx
+openai[all]
+pandas
+pydantic
+requests
+tenacity
+typer
+uvicorn
