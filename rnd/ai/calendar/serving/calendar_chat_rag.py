@@ -8,19 +8,16 @@ prompt="My google calendar is stored inside a sqlite3 table: calendar_summary. I
 
 verbose=3
 
-python xhcaftv/ai/calendar/serving/calendar_chat_rag.py --gpt_model=$gpt_model --prompt="$prompt" --verbose=$verbose
+python rnd/ai/calendar/serving/calendar_chat_rag.py --gpt_model=$gpt_model --prompt="$prompt" --verbose=$verbose
 
 """
 import json
 import pandas as pd
 import re
 
-from xhcaftv.commons.commons import create_logger
-from xhcaftv.ai.calendar.utils.chat_utils import chat_with_backoff
-from xhcaftv.ai.calendar.serving import save_calendar_summaries
+from rnd.ai.calendar.utils.chat_utils import chat_with_backoff
+from rnd.ai.calendar.serving import save_calendar_summaries
 
-# Script-level constants
-logger = create_logger(__name__)
 
 pd.set_option("display.max_columns", 100)
 pd.set_option("display.width", 120)
@@ -50,7 +47,7 @@ def main(
         session_id = None
     response = chat_with_backoff(model=gpt_model, messages=[{"role": "user", "content": prompt}], session_id=session_id)
     reply = response["choices"][0]["message"]["content"]
-    logger.info("Reply: %s" % reply)
+    print("Reply: %s" % reply)
 
     sql_query = parse_sql_query(reply)
     op = save_calendar_summaries.DbOperator()
@@ -62,7 +59,7 @@ def main(
         "result": result.to_dict("records"),
     }
     if verbose >= 3:
-        logger.info("result:\n%s" % json.dumps(result, indent=4))
+        print("result:\n%s" % json.dumps(result, indent=4))
     return result
 
 
@@ -75,6 +72,6 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", type=int, default=1)
     args = vars(parser.parse_args())
 
-    logger.info("Command line args:\n%s" % json.dumps(args, indent=4))
+    print("Command line args:\n%s" % json.dumps(args, indent=4))
     main(**args)
-    logger.info("ALL DONE!\n")
+    print("ALL DONE!\n")

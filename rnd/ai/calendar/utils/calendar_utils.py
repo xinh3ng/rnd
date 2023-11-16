@@ -3,11 +3,7 @@ import os
 import pickle
 from typing import List
 
-from xhcaftv.commons.commons import create_logger
-from xhcaftv.commons import aws
-
-
-logger = create_logger(__name__)
+from rnd.commons import aws
 
 
 def get_credentials(

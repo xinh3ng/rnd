@@ -2,11 +2,6 @@ import openai
 import os
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-from xhcaftv.commons.commons import create_logger
-
-
-logger = create_logger(__name__)
-
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 

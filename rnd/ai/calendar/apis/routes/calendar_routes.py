@@ -18,14 +18,7 @@ import json
 from pydantic import BaseModel
 from typing import List
 
-from xhcaftv.commons.commons import create_logger
-from xhcaftv.ai.calendar.serving import calendar_chat_native, calendar_chat_rag, save_calendar_summaries
-
-
-logger = create_logger(__name__)
-
-
-########################################
+from rnd.ai.calendar.serving import calendar_chat_native, calendar_chat_rag, save_calendar_summaries
 
 
 router_prefix = f"/ai/calendar"
@@ -98,9 +91,9 @@ class ReadInputParameters(BaseModel):
 async def read_summaries(in_params: ReadInputParameters):
     op = save_calendar_summaries.DbOperator()
     result = op.read(sql_query=in_params.sql_query)
-    logger.info(f"result has {len(result)} rows")
+    print(f"result has {len(result)} rows")
 
     result = result.to_dict("records")
     if in_params.verbose >= 3:
-        logger.info("result:\n%s" % json.dumps(result, indent=4))
+        print("result:\n%s" % json.dumps(result, indent=4))
     return result
