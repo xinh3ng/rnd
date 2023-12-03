@@ -7,9 +7,6 @@ export AWS_ACCESS_KEY=  #
 export AWS_SECRET_KEY=  #
 export DBRICKS_TOKEN=  #
 
-export BRANCH_KEY=
-export BRANCH_SECRET=
-
 # Derived variables
 whl_file=rnd-${version}-py3-none-any.whl
 

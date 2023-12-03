@@ -24,7 +24,6 @@ from typing import List
 
 class Solution:
     def productExceptSelf(self, nums: List[int]) -> List[int]:
-
         output = [1 for _ in nums]
 
         for idx, n in enumerate(nums):
