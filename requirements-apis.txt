@@ -13,6 +13,7 @@ httpx
 openai[all]
 pandas
 pydantic
+pymupdf
 requests
 tenacity
 typer
