@@ -1,16 +1,18 @@
 """Save PDFs that I downloaded from IAC website
 
 The processed data is saved as
-year | subject | grade | question | answer
-
+year | subject |      geo | grade | question_no | question | answer | filename
+2014 | history | national |   "4" |           1 |      ... |  Japan | ...
+...
+...
 
 # Usage Example
 
-write_mode=overwrite
+write_mode=replace
 
 verbose=3
 
-python rnd/ai/iac/serving/save_pdfs.py
+python rnd/ai/iac/serving/save_pdfs.py --write_mode=$write_mode --verbose=$verbose
 
 """
 from cafpyutils.generic import create_logger
@@ -25,6 +27,7 @@ import json
 import os
 import pandas as pd
 import sqlite3
+import re
 from typing import List
 
 
@@ -40,7 +43,7 @@ pd.set_option("display.max_colwidth", None)  # No truncation
 
 
 class DbOperator(object):
-    def __init__(self, db: str = "calendar.db"):
+    def __init__(self, db: str):
         self.db = db
         self.conn = sqlite3.connect(self.db)  # create or connect to a sqlite db
 
@@ -55,18 +58,21 @@ class DbOperator(object):
         """
         )
 
-    def write(self, data: pd.DataFrame, table: str = "calendar_summary", write_mode: str = "replace"):
+    def write(self, data: pd.DataFrame, table: str, write_mode: str = "replace", verbose: int = 1):
         write_modes_allowed = ["replace", "append"]
         assert write_mode in write_modes_allowed, f"write_mode must be among {write_modes_allowed}"
         _ = data.to_sql(name=table, con=self.conn, if_exists=write_mode, index=False)
-        print(f"Successfully write data into '{table}' table w/ write_mode: '{write_mode}'")
+        logger.info(f"Successfully write into '{table}' table w/ write_mode: '{write_mode}'")
 
-    def read(self, sql_query: str):
+    def read_as_pandas(self, sql_query: str) -> pd.DataFrame:
         data = pd.read_sql(sql_query, self.conn)
         return data
 
     def close_connection(self):
         self.conn.close()
+
+
+########################################
 
 
 def get_credentials(
@@ -105,12 +111,12 @@ def download_file(service, file_id):
     done = False
     while not done:
         status, done = downloader.next_chunk()
-        print("Download progress: {0}".format(status.progress() * 100))
+        # logger.info("Download progress: {0}".format(status.progress() * 100))
     file.seek(0)
     return file
 
 
-def extract_text_from_pdf(file_stream):
+def extract_text_from_pdf(file_stream) -> str:
     document = fitz.open("pdf", file_stream)
     text = ""
     for page in document:
@@ -119,12 +125,50 @@ def extract_text_from_pdf(file_stream):
     return text
 
 
+def extract_fields_from_text(text: str, verbose: int = 1) -> dict:
+    """The input text contains the entire pdf file. We tease out all the useful information
+
+    Sample string
+        large_string = "
+        (1) What is the capital of France?
+        Answer: Paris
+        (2) What is the largest mammal?
+        Answer: Blue Whale
+        ... (and so on) ...
+        (100) What is the smallest planet in our solar system?
+        Answer: Mercury
+        "
+    """
+
+    # Regular expression pattern
+    # Explanation:
+    # \(\d+\) - Matches a number in parentheses (e.g., (1), (2), etc.)
+    # \((\d+)\) - Matches and captures a number in parentheses (e.g., (1), (2), etc.)
+    # [\s]* - Matches any whitespace character (like space, newline) zero or more times
+    # .+? - Matches any characters (non-greedily) up to the next part of the pattern
+    # ANSWER: - Matches the literal string "Answer:"
+    # .+? - Matches the answer text (non-greedily)
+    # (?=\(\d+\)|$) - Positive lookahead to ensure that each answer is followed by another question number or the end of the string
+
+    pattern = r"\((\d+)\)[\s]*(.+?)\nANSWER:[\s]*(.+?)(?=\(\d+\)|$)"
+    pairs = re.findall(pattern, text, re.DOTALL)
+
+    fields = []
+    for idx, (question_no, question, answer) in enumerate(pairs, 1):
+        j = {"question_no": question_no, "question": question, "answer": answer}
+        fields.append(j)
+
+    logger.info(f"Successfully extracted {idx + 1} pairs of questions and answers")
+    data = pd.DataFrame(fields)
+    return data
+
+
 ########################################
 
 
 def main(
     date_range: str = None,
-    write_mode: str = "overwrite",
+    write_mode: str = "replace",
     verbose: int = 1,
 ) -> dict:
     """Main function"""
@@ -133,34 +177,30 @@ def main(
     creds = get_credentials(scopes=gcp_scopes)
     service = build("drive", "v3", credentials=creds)
 
+    # Querying files from the specific folder
     # https://drive.google.com/drive/folders/14ZLljcELtt_eQ2gC6UF_VGUM7pi1sA_q
     folder_id = "14ZLljcELtt_eQ2gC6UF_VGUM7pi1sA_q"
-
-    files, page_token = [], None
     query = f"'{folder_id}' in parents"
-
-    # Query to get files from the specific folder
     response = service.files().list(q=query, pageSize=20, fields="nextPageToken, files(id, name)").execute()
-
-    items = response.get("files", [])
-    # for item in items:
-
-    for item in items:
-        print(f"""Reading filename: '{item["name"]}' with ID: {item['id']}""")
+    results = []
+    for item in response.get("files", []):
+        logger.info(f"""Reading filename: '{item["name"]}' with ID: {item['id']}""")
         file_stream = download_file(service, file_id=item["id"])
         text = extract_text_from_pdf(file_stream)
-        logger.info(text[:500])
+        data = extract_fields_from_text(text)
+        results.append(data)
 
-    breakpoint()
+    data = pd.concat(results)
+    logger.info("data examples:\n%s", data.head(3).to_string(line_width=120))
 
-    op.write(data=data, write_mode=write_mode)
+    # Save in sqlite3
+    op = DbOperator(db="bees.db")
+    op.write(data=data, table="qa", write_mode=write_mode, verbose=verbose)
 
-    # Testing purpose
-    result = op.read(sql_query="select * from calendar_summary limit 5")
-    print("Test is a succees")
-    if verbose >= 3:
-        print("Examples:\n%s" % result.head(5).to_string(line_width=120))
-    return result
+    # Validation purpose
+    result = op.read_as_pandas(sql_query="select * from qa limit 5")
+    assert len(result) >= 1
+    return
 
 
 if __name__ == "__main__":
