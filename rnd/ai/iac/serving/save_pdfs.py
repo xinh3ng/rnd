@@ -6,13 +6,21 @@ year | subject |      geo | grade | question_no | question | answer | filename
 ...
 ...
 
+####################
 # Usage Example
+####################
+
+# folder_id: 
+# "14ZLljcELtt_eQ2gC6UF_VGUM7pi1sA_q", history folder
+# "1jB8RaTbwdr09gUukcq-orS4NsFHR-9f2", geography folder 
+# "1urBwsQvb4_lEG0mdP-QH7AtrsY9ok4Mb", 
+folder_id="1jB8RaTbwdr09gUukcq-orS4NsFHR-9f2"
 
 write_mode=replace
 
 verbose=3
 
-python rnd/ai/iac/serving/save_pdfs.py --write_mode=$write_mode --verbose=$verbose
+python rnd/ai/iac/serving/save_pdfs.py --folder_id=$folder_id --write_mode=$write_mode --verbose=$verbose
 
 """
 from cafpyutils.generic import create_logger
@@ -67,6 +75,9 @@ class DbOperator(object):
     def read_as_pandas(self, sql_query: str) -> pd.DataFrame:
         data = pd.read_sql(sql_query, self.conn)
         return data
+
+    def read(sel, sql_query: str) -> str:
+        raise NotImplementedError
 
     def close_connection(self):
         self.conn.close()
@@ -150,15 +161,28 @@ def extract_fields_from_text(text: str, verbose: int = 1) -> dict:
     # .+? - Matches the answer text (non-greedily)
     # (?=\(\d+\)|$) - Positive lookahead to ensure that each answer is followed by another question number or the end of the string
 
-    pattern = r"\((\d+)\)[\s]*(.+?)\nANSWER:[\s]*(.+?)(?=\(\d+\)|$)"
-    pairs = re.findall(pattern, text, re.DOTALL)
+    # All possible patterns
+    patterns = [
+        r"\((\d+)\)[\s]*(.+?)\nANSWER: (.+?)\n(?=\(\d+\)|$)",
+        r"(\d+)\. (.+?)\nANSWER: (.+?)\n(?=\d+\. |$)",
+        r"(\d+)\.[\s]*(.+?)\nANSWER: (.+?)\n(?=\d+\.|$)",
+    ]
 
-    fields = []
-    for idx, (question_no, question, answer) in enumerate(pairs, 1):
-        j = {"question_no": question_no, "question": question, "answer": answer}
-        fields.append(j)
+    for pattern in patterns:
+        pairs = re.findall(pattern, text, re.DOTALL)
+        if len(pairs) == 0:  # Now to try a different pattern
+            continue
+
+        fields = []
+        for idx, (question_no, question, answer) in enumerate(pairs, 1):
+            j = {"question_no": question_no, "question": question, "answer": answer}
+            fields.append(j)
+        break
 
     logger.info(f"Successfully extracted {idx + 1} pairs of questions and answers")
+    if idx + 1 < 20:
+        logger.warning("Didn't seem to extract enough pairs")
+
     data = pd.DataFrame(fields)
     return data
 
@@ -167,19 +191,17 @@ def extract_fields_from_text(text: str, verbose: int = 1) -> dict:
 
 
 def main(
-    date_range: str = None,
+    folder_id: str,
     write_mode: str = "replace",
     verbose: int = 1,
 ) -> dict:
     """Main function"""
-    date_range = ["2000", "2099"] if date_range is None else date_range.split(",")
 
     creds = get_credentials(scopes=gcp_scopes)
     service = build("drive", "v3", credentials=creds)
 
     # Querying files from the specific folder
     # https://drive.google.com/drive/folders/14ZLljcELtt_eQ2gC6UF_VGUM7pi1sA_q
-    folder_id = "14ZLljcELtt_eQ2gC6UF_VGUM7pi1sA_q"
     query = f"'{folder_id}' in parents"
     response = service.files().list(q=query, pageSize=20, fields="nextPageToken, files(id, name)").execute()
     results = []
@@ -187,19 +209,20 @@ def main(
         logger.info(f"""Reading filename: '{item["name"]}' with ID: {item['id']}""")
         file_stream = download_file(service, file_id=item["id"])
         text = extract_text_from_pdf(file_stream)
-        data = extract_fields_from_text(text)
-        results.append(data)
+        results.append(extract_fields_from_text(text))
 
     data = pd.concat(results)
     logger.info("data examples:\n%s", data.head(3).to_string(line_width=120))
+    [int(x) for x in set(data.question_no)]  # All question numbers must be able to convert into integer
 
     # Save in sqlite3
     op = DbOperator(db="bees.db")
     op.write(data=data, table="qa", write_mode=write_mode, verbose=verbose)
-
-    # Validation purpose
-    result = op.read_as_pandas(sql_query="select * from qa limit 5")
+    result = op.read_as_pandas(sql_query="select * from qa limit 5")  # Validation purpose
     assert len(result) >= 1
+
+    # Save in csv
+    data.to_csv("/tmp/bees_qa.csv", index=False)
     return
 
 
@@ -207,7 +230,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--write_mode")
+    parser.add_argument("--folder_id")
+    parser.add_argument("--write_mode", default="replace")
     parser.add_argument("--verbose", type=int, default=1)
 
     args = vars(parser.parse_args())

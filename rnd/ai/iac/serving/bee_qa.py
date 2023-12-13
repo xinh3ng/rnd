@@ -1,0 +1,90 @@
+"""Select bee questions and answers using chatgpt in a RAG way
+
+# Usage Example
+
+gpt_model="gpt-3.5-turbo-16k"
+
+
+prompt_template="My bee questions are stored inside a sqlite3 table: qa. It has the following columns and short descriptions: (1) 'qustion_no' is the question number; (2) 'question' is the question; (3) 'answer' is the answer. When I make a request below, I want you to write the sql query and also run the sql and get me the final output."
+
+prompt="${prompt_template}. Now can you select 3 random questions and anssers?"
+
+verbose=3
+
+python rnd/ai/iac/serving/bee_qa.py --gpt_model=$gpt_model --prompt="$prompt" --verbose=$verbose
+
+"""
+from cafpyutils.generic import create_logger
+import json
+import openai
+import os
+import pandas as pd
+import re
+from tenacity import retry, stop_after_attempt, wait_random_exponential
+
+from rnd.ai.calendar.utils.chat_utils import chat_with_backoff
+from rnd.ai.iac.serving.save_pdfs import DbOperator
+
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+logger = create_logger(__name__)
+
+pd.set_option("display.max_columns", 100)
+pd.set_option("display.width", 120)
+pd.set_option("display.max_colwidth", None)  # No truncation
+
+
+def parse_sql_query(text: str) -> str:
+    text = text.lower()
+
+    # Grab the first ```sql and the immediate next ';'
+    pattern = r"```.*?```"
+    match = re.search(pattern, text, re.DOTALL)
+
+    sql = text[match.start() : match.end()].replace("```", "").replace("sql", "")
+    assert ("select" in sql) and ("from" in sql)
+    return sql
+
+
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(3))
+def chat_with_backoff(**kwargs):
+    """Backoff to combat with rate limits"""
+    response = openai.ChatCompletion.create(model=kwargs["model"], messages=kwargs["messages"])
+    return response
+
+
+def main(
+    gpt_model: str,
+    prompt: str,
+    verbose: int = 1,
+) -> dict:
+    response = chat_with_backoff(model=gpt_model, messages=[{"role": "user", "content": prompt}])
+    reply = response["choices"][0]["message"]["content"]
+    print("Reply: %s" % reply)
+
+    sql_query = parse_sql_query(reply)
+    op = DbOperator(db="bees.db")
+    result = op.read_as_pandas(sql_query=sql_query)
+
+    result = {
+        "reply": reply,
+        "result": result.to_dict("records"),
+    }
+    if verbose >= 3:
+        logger.info("result:\n%s" % json.dumps(result, indent=4))
+    return result
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gpt_model")
+    parser.add_argument("--prompt")
+    parser.add_argument("--verbose", type=int, default=1)
+    args = vars(parser.parse_args())
+
+    print("Command line args:\n%s" % json.dumps(args, indent=4))
+    main(**args)
+    print("ALL DONE!\n")
