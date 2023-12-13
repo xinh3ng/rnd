@@ -26,7 +26,6 @@ pd.set_option("display.width", 120)
 pd.set_option("display.max_colwidth", None)  # No truncation
 
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 class DbOperator(object):

@@ -16,7 +16,9 @@ python rnd/ai/iac/serving/bee_qa.py --gpt_model=$gpt_model --prompt="$prompt" --
 """
 from cafpyutils.generic import create_logger
 import json
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 import os
 import pandas as pd
 import re
@@ -26,7 +28,6 @@ from rnd.ai.calendar.utils.chat_utils import chat_with_backoff
 from rnd.ai.iac.serving.save_pdfs import DbOperator
 
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 logger = create_logger(__name__)
 
@@ -50,7 +51,7 @@ def parse_sql_query(text: str) -> str:
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(3))
 def chat_with_backoff(**kwargs):
     """Backoff to combat with rate limits"""
-    response = openai.ChatCompletion.create(model=kwargs["model"], messages=kwargs["messages"])
+    response = client.chat.completions.create(model=kwargs["model"], messages=kwargs["messages"])
     return response
 
 
