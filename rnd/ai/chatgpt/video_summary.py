@@ -69,14 +69,16 @@ def main(
         # logger.info(text)
 
     logger.info("Calling chatGPT...")
-    response = client.chat.completions.create(model="gpt-3.5-turbo",
-    messages=[
-        {
-            "role": "system",
-            "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible.",
-        },
-        {"role": "user", "content": f"Can you summarize the following text in about 100 words: {text}"},
-    ])
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible.",
+            },
+            {"role": "user", "content": f"Can you summarize the following text in about 100 words: {text}"},
+        ],
+    )
     logger.info("Reply: \n%s" % response["choices"][0]["message"]["content"])
     return
 

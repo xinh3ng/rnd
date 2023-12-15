@@ -12,8 +12,6 @@ python rnd/ai/calendar/serving/save_calendar_summaries.py --write_mode=$write_mo
 from datetime import datetime
 from googleapiclient.discovery import build
 import json
-import openai
-import os
 import pandas as pd
 import sqlite3
 from typing import List
@@ -24,8 +22,6 @@ from rnd.ai.calendar.utils.calendar_utils import get_credentials, summarize_cale
 pd.set_option("display.max_columns", 100)
 pd.set_option("display.width", 120)
 pd.set_option("display.max_colwidth", None)  # No truncation
-
-
 
 
 class DbOperator(object):
