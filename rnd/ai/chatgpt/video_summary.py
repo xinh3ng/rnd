@@ -10,6 +10,9 @@ from bs4 import BeautifulSoup
 import json
 from moviepy import editor as E
 import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 import os
 from pytube import YouTube
 import requests
@@ -17,8 +20,8 @@ from totepy.generic import create_logger
 
 logger = create_logger(__name__, level="info")
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
-openai.organization_id = "org-bSEDQevVUvT2CCljpD3DNAEA"
+# TODO: The 'openai.organization_id' option isn't read in the client API. You will need to pass it when you instantiate the client, e.g. 'OpenAI(organization_id="org-bSEDQevVUvT2CCljpD3DNAEA")'
+# openai.organization_id = "org-bSEDQevVUvT2CCljpD3DNAEA"
 
 
 def youtube_download(url):
@@ -61,12 +64,12 @@ def main(
 
     if 1 == 1:
         logger.info("Using whisper-1 to get the transcription from a mp3 file ...")
-        transcript = openai.Audio.transcribe("whisper-1", open(audio_filepath, "rb"))
+        transcript = client.audio.transcribe("whisper-1", open(audio_filepath, "rb"))
         text = transcript["text"]
         # logger.info(text)
 
     logger.info("Calling chatGPT...")
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
