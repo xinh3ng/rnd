@@ -1,6 +1,8 @@
 # pandas<2.0.0, because ...
 # s
 ################################################################################
+azure-identity
+azure-keyvault-secrets 
 boto3
 fastapi[all]
 fastapi-pagination

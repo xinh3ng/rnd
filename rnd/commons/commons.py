@@ -1,3 +1,5 @@
+import logging
+from logging.handlers import RotatingFileHandler
 import time
 
 
@@ -17,3 +19,45 @@ def retry(n_trials: int, sleep: int = 1, *exception_types):
                 time.sleep(sleep)
 
     return try_fn
+
+
+def create_logger(
+    name: str,
+    level: str = "info",
+    fmt: str = "%(asctime)s %(levelname)s %(name)s: %(message)s",
+    datefmt: str = "%Y-%m-%d %H:%M:%S",
+    add_file_handler: bool = False,
+    logfile: str = "/tmp/tmp.log",
+):
+    """Create a formatted logger
+
+    Examples:
+        logger = create_logger(__name__, level="debug")
+        logger.info("Hello World")
+    """
+    level = {"debug": logging.DEBUG, "info": logging.INFO, "warn": logging.WARN, "error": logging.ERROR}.get(level)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    if fmt == "json":
+        log_formatter = jsonlogger.JsonFormatter()
+    else:
+        log_formatter = logging.Formatter(fmt=fmt, datefmt=datefmt)
+
+    # Print on console
+    ch = logging.StreamHandler()
+    ch.setLevel(level)
+    ch.setFormatter(log_formatter)
+    logger.addHandler(ch)
+
+    # Print in a log file
+    if add_file_handler:
+        if "s3://" in logfile:
+            logfile = "/tmp/tmp.log"  # Put in local first
+
+        th = RotatingFileHandler(logfile, mode="a", maxBytes=1_000_000, backupCount=5, encoding="utf-8")
+        th.setFormatter(log_formatter)
+        logger.addHandler(th)
+
+    return logger

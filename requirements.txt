@@ -1,3 +1,5 @@
+azure-identity
+azure-keyvault-secrets 
 boto3
 google-api-python-client 
 google-auth-httplib2
@@ -11,3 +13,4 @@ pymupdf
 requests
 scipy
 tenacity
+

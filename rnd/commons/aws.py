@@ -5,6 +5,10 @@ import json
 import pandas as pd
 import os
 
+from rnd.commons.commons import create_logger
+
+logger = create_logger(__name__, level="info")
+
 
 def get_aws_client(
     service_name: str = "s3",
@@ -127,7 +131,7 @@ class S3FileUtils(object):
         bkt = full_path[0:loc]
         path = full_path[loc + 1 :]
         if verbose >= 2:
-            print(f"Separated bucket and path: '{bkt}' and '{path}'")
+            logger.info(f"Separated bucket and path: '{bkt}' and '{path}'")
         return bkt, path
 
     def upload_file(self, filepath_in, filepath_s3):
@@ -135,7 +139,7 @@ class S3FileUtils(object):
 
         resource = get_aws_resource(service_name="s3")
         result = resource.Bucket(bkt).upload_file(filepath_in, filepath)
-        print(f"Successfully copied {filepath_in} to {filepath_s3}: {result}")
+        logger.info(f"Successfully copied {filepath_in} to {filepath_s3}: {result}")
 
     def copy_file_within_bucket(
         self, bucket: str, source_filepath: str, destination_filepath: str, copy_size_threshold: int = 5
@@ -163,11 +167,11 @@ class S3FileUtils(object):
         copy_source = {"Bucket": bucket, "Key": source_filepath}
 
         # Copy the object to the destination
-        print(f"Copying the file: {source_filepath} into {destination_filepath}")
+        logger.info(f"Copying the file: {source_filepath} into {destination_filepath}")
 
         if file_size_gb > copy_size_threshold:
             # this works for files greater than 5gb
-            print(f"File is greater than {copy_size_threshold}GB")
+            logger.info(f"File is greater than {copy_size_threshold}GB")
             s3.copy(Bucket=bucket, CopySource=copy_source, Key=destination_filepath)
         else:
             s3.copy_object(Bucket=bucket, CopySource=copy_source, Key=destination_filepath)
@@ -189,7 +193,7 @@ class S3FileUtils(object):
             botocore.exceptions.EndpointConnectionError: If there is an error connecting to the AWS S3 endpoint.
         """
 
-        print(f"Moving the file from {source_filepath} into {destination_filepath}")
+        logger.info(f"Moving the file from {source_filepath} into {destination_filepath}")
         self.copy_file_within_bucket(
             bucket=bucket, source_filepath=source_filepath, destination_filepath=destination_filepath
         )
@@ -211,7 +215,7 @@ class S3FileUtils(object):
             botocore.exceptions.EndpointConnectionError: If there is an error connecting to the AWS S3 endpoint.
         """
         s3 = get_aws_client("s3", access_key=self.access_key, secret_key=self.secret_key)
-        print(f"Deleting the file: '{bucket}/{filepath}'")
+        logger.info(f"Deleting the file: '{bucket}/{filepath}'")
         s3.delete_object(Bucket=bucket, Key=filepath)
 
 
@@ -235,7 +239,7 @@ class S3IO(object):
         bucket_obj = resource.Bucket(name=bucket)
         bucket_obj.put_object(Key=filepath, Body=data_json)
         if verbose >= 2:
-            print(f"Successfully saved json file at '{bucket}/{filepath}'")
+            logger.info(f"Successfully saved json file at '{bucket}/{filepath}'")
         return
 
     def read_json_s3(self, dir: str, filename: str):

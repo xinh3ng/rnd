@@ -3,14 +3,11 @@
 # Set the following env variables whenever needed
 version=  # package version
 # export USER=  # xinheng
-export AWS_ACCESS_KEY=  #
-export AWS_SECRET_KEY=  #
-export DBRICKS_TOKEN=  #
 
 # Derived variables
 whl_file=rnd-${version}-py3-none-any.whl
 
-docker_image_tag=retrieval:${version}
+docker_image_tag=rnd:${version}
 
 # Build docker image file
 docker build -t ${docker_image_tag} .

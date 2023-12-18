@@ -6,14 +6,13 @@ gpt_model="gpt-3.5-turbo-16k"
 
 prompt_template="My bee questions are stored inside a sqlite3 table: qa. It has the following columns and short descriptions: (1) 'qustion_no' is the question number; (2) 'question' is the question; (3) 'answer' is the answer. When I make a request below, I want you to write the sql query and also run the sql and get me the final output."
 
-prompt="${prompt_template}. Now can you select 3 random questions and anssers?"
+prompt="${prompt_template}. Now can you select 3 random questions and answers?"
 
 verbose=3
 
 python rnd/ai/iac/serving/bee_qa.py --gpt_model=$gpt_model --prompt="$prompt" --verbose=$verbose
 
 """
-from cafpyutils.generic import create_logger
 import json
 from openai import OpenAI
 import os
@@ -22,8 +21,10 @@ import re
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 from typing import List
 
-from rnd.ai.calendar.utils.chat_utils import chat_with_backoff
 from rnd.ai.iac.serving.save_pdfs import DbOperator
+
+from rnd.commons.commons import create_logger
+from rnd.commons import azure
 
 logger = create_logger(__name__)
 
@@ -54,9 +55,23 @@ def chat_with_backoff(client, model: str, messages: List[dict]):
 def main(
     gpt_model: str,
     prompt: str,
-    openai_api_key: str = os.environ.get("OPENAI_API_KEY"),
+    openai_api_key: str = None,
     verbose: int = 1,
 ) -> dict:
+    """
+    Args:
+        openai_api_key: os.environ.get("OPENAI_API_KEY")
+    """
+    if openai_api_key is None:
+        secret = azure.get_azure_secret(
+            secret_name="openai-api-key",
+            vault_url=os.environ.get("AZURE_VAULT_URL"),
+            tenant_id=os.environ.get("AZURE_TENANT_ID"),
+            client_id=os.environ.get("AZURE_CLIENT_ID"),
+            client_secret=os.environ.get("AZURE_CLIENT_SECRET"),
+        )
+        openai_api_key = secret.value
+
     openai_client = OpenAI(api_key=openai_api_key)
 
     response = chat_with_backoff(client=openai_client, model=gpt_model, messages=[{"role": "user", "content": prompt}])

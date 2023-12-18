@@ -11,6 +11,10 @@ build
 
 *.db
 *.pickle
+*.json
+*.nt.bz2
+*.tar.gz
+*.tgz
 .RData
 .Rhistory
 
@@ -40,11 +44,6 @@ doc/samples
 .tox/
 .coverage
 pip-wheel-metadata
-
-*.nt.bz2
-*.tar.gz
-*.tgz
-
 
 *.prefs
 .pydevproject

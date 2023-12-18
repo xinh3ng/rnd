@@ -23,7 +23,6 @@ verbose=3
 python rnd/ai/iac/serving/save_pdfs.py --folder_id=$folder_id --write_mode=$write_mode --verbose=$verbose
 
 """
-from cafpyutils.generic import create_logger
 import fitz  # PyMuPDF
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -38,6 +37,7 @@ import sqlite3
 import re
 from typing import List
 
+from rnd.commons.commons import create_logger
 
 logger = create_logger(__name__)
 
@@ -87,8 +87,8 @@ class DbOperator(object):
 
 
 def get_credentials(
-    token_loc: str = f"{os.environ['HOME']}/.secrets/googlecloud/xin.heng@gmail.com/token.json",
-    credentials_json: str = f"{os.environ['HOME']}/.secrets/googlecloud/xin.heng@gmail.com/credentials.json",
+    token_loc: str = "gcp_token.json",
+    credentials_json: str = "gcp_credentials.json",
     scopes: List[str] = gcp_scopes,
 ):
     """Get credentials

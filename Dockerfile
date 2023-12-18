@@ -17,7 +17,8 @@ RUN apt-get update && \
 COPY ./rnd /app/rnd
 COPY ./setup.cfg /app/setup.cfg
 COPY ./setup.py /app/setup.py
-COPY ./gcp-api-token-data-team.pickle /app/gcp-api-token-data-team.pickle
+COPY ./gcp_token.json /app/gcp_token.json
+COPY ./gcp_credentials.json /app/gcp_credentials.json
 WORKDIR /app
 RUN pip install --no-cache-dir .
 

@@ -23,7 +23,7 @@ from rnd.ai.calendar.serving import calendar_chat_native, calendar_chat_rag, sav
 
 router_prefix = f"/ai/calendar"
 
-router = APIRouter(prefix=router_prefix, tags=["in_app"])
+router = APIRouter(prefix=router_prefix, tags=["calendar"])
 
 
 class NativeChatInputParameters(BaseModel):
